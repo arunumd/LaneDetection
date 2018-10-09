@@ -1,5 +1,5 @@
 /************************************************************************************************
-* @file      : Header file for image cleaner  class
+* @file      : Header file for Thresholder class
 * @author    : Arun Kumar Devarajulu
 * @date      : October 8, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
@@ -22,9 +22,7 @@
 *              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 *              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 *              SOFTWARE.
-*
-*
-**************************************************************************************************/
+*************************************************************************************************/
 #pragma once
 #include <iostream>
 #include "opencv2/core.hpp"
@@ -38,19 +36,30 @@
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgcodecs.hpp"
 
-class Cleaner {
+class Thresholder {
+
 public:
-    Cleaner (cv::Mat cParam, cv::Mat dCoeffs) : camParams(cParam), distCoeffs(dCoeffs) {}
-    ~Cleaner () {};
+	Thresholder (cv::Scalar wMin, cv::Scalar wMax, cv::Scalar yMin, cv::Scalar yMax) : \
+		whiteMin(wMin), whiteMax(wMax), yellowMin(yMin), yellowMax(yMax) {}
 
-    void imgUndistort (cv::Mat rawImg);
+	~Thresholder () {};
 
-    cv::Mat imgSmoothen ();
+	cv::Mat convertToLab (cv::Mat smoothImg);
+
+	cv::Mat whiteMaskFunc ();
+
+	cv::Mat yellowMaskFunc ();
+
+	cv::Mat combineLanes ();
 
 private:
-    cv::Mat camParams; //< Container for Camera parameters
-    cv::Mat distCoeffs; //< Container for distortion coefficients
-    cv::Mat rawImage; //< Container for input image
-    cv::Mat blurImage; //< Container for denoised image
-    cv::Mat undistortedImage; //< Container for undistorted image
+	cv::Mat inputImg;
+	const cv::Scalar whiteMin; //< Minimum threshold for white lane
+	const cv::Scalar whiteMax; //< Maximum threshold for white lane
+	const cv::Scalar yellowMin; //< Minimum threshold for yellow lane
+	const cv::Scalar yellowMax; //< Maximum threshold for yellow lane
+	cv::Mat whiteMask; //< Container for white lanes
+	cv::Mat yellowMask; //< Container for yellow lanes
+	cv::Mat lanesMask; //< Container for all lanes combined
+	cv::Mat labImage; //< Container for LAB converted input image
 };

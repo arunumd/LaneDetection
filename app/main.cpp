@@ -36,6 +36,7 @@
 #include "opencv2/imgcodecs.hpp"
 #include "Files.hpp"
 #include "Cleaner.hpp"
+#include "Thresholder.hpp"
 #include <tuple>
 
 
@@ -127,7 +128,30 @@ int main(int argc, char *argv[])
 
 		blurImg = imgClean.imgSmoothen ();
 
-		cv::imshow("Video frames", blurImg);
+		Thresholder lanethresh (cv::Scalar(77*255/100, -7+128, -6+128), cv::Scalar(100*255/100, 1+128, 7+128), \
+		                        cv::Scalar(80*255/100, -24+128, 50+128), cv::Scalar(100*255/100, 36+128, 128+128));
+
+		cv::Mat labOutput;
+
+		labOutput = lanethresh.convertToLab (blurImg);
+
+		cv::Mat whiteOutput;
+
+		whiteOutput = lanethresh.whiteMaskFunc ();
+
+		cv::Mat yellowOutput;
+
+		yellowOutput = lanethresh.yellowMaskFunc ();
+
+		cv::Mat lanesMask;
+
+		lanesMask = lanethresh.combineLanes ();
+
+		cv::imshow("White Lanes", whiteOutput);
+
+		cv::imshow("Yellow Lanes", yellowOutput);
+
+		cv::imshow("Lanes Mask", lanesMask);
 
 		char c = (char) cv::waitKey (0);
 		if (c == 27)

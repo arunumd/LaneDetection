@@ -1,5 +1,5 @@
 /************************************************************************************************
-* @file      : Header file for image cleaner  class
+* @file      : Implementation file for Thresholder class
 * @author    : Arun Kumar Devarajulu
 * @date      : October 8, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
@@ -22,35 +22,30 @@
 *              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 *              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 *              SOFTWARE.
-*
-*
-**************************************************************************************************/
-#pragma once
-#include <iostream>
-#include "opencv2/core.hpp"
-#include "opencv2/opencv.hpp"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include "opencv2/features2d.hpp"
-#include "opencv2/xfeatures2d.hpp"
-#include <opencv2/imgproc/imgproc.hpp>
-#include "opencv2/imgproc/imgproc_c.h"
-#include "opencv2/calib3d.hpp"
-#include "opencv2/imgcodecs.hpp"
+*************************************************************************************************/
+#include "Thresholder.hpp"
 
-class Cleaner {
-public:
-    Cleaner (cv::Mat cParam, cv::Mat dCoeffs) : camParams(cParam), distCoeffs(dCoeffs) {}
-    ~Cleaner () {};
+cv::Mat Thresholder::convertToLab (cv::Mat smoothImg) {
+	inputImg = smoothImg;
+	cv::cvtColor (inputImg, labImage, cv::COLOR_BGR2Lab);
+	return labImage;
+}
 
-    void imgUndistort (cv::Mat rawImg);
+cv::Mat Thresholder::whiteMaskFunc () {
+	whiteMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
+	cv::inRange (labImage, whiteMin, whiteMax, whiteMask);
+	return whiteMask;
+}
 
-    cv::Mat imgSmoothen ();
+cv::Mat Thresholder::yellowMaskFunc () {
+	yellowMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
+	cv::inRange (labImage, yellowMin, yellowMax, yellowMask);
+	return yellowMask;
+}
 
-private:
-    cv::Mat camParams; //< Container for Camera parameters
-    cv::Mat distCoeffs; //< Container for distortion coefficients
-    cv::Mat rawImage; //< Container for input image
-    cv::Mat blurImage; //< Container for denoised image
-    cv::Mat undistortedImage; //< Container for undistorted image
-};
+cv::Mat Thresholder::combineLanes () {
+	lanesMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
+	cv::bitwise_or (whiteMask, yellowMask, lanesMask);
+	return lanesMask;
+}
+
