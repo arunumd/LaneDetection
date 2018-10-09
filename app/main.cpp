@@ -1,3 +1,29 @@
+/************************************************************************************************
+* @file      : main file for Autonomous vehicle lane detection using OpenCV and C++
+* @author    : Arun Kumar Devarajulu
+* @date      : October 8, 2018
+* @copyright : 2018, Arun Kumar Devarajulu
+* @license   : MIT License
+*
+*              Permission is hereby granted, free of charge, to any person obtaining a copy
+*              of this software and associated documentation files (the "Software"), to deal
+*              in the Software without restriction, including without limitation the rights
+*              to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*              copies of the Software, and to permit persons to whom the Software is
+*              furnished to do so, subject to the following conditions:
+*
+*              The above copyright notice and this permission notice shall be included in all
+*              copies or substantial portions of the Software.
+*
+*              THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*              IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*              FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*              AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*              SOFTWARE.
+*************************************************************************************************/
+
 #include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
 #include <opencv2/core/core.hpp>
@@ -9,6 +35,7 @@
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "Files.hpp"
+#include "Cleaner.hpp"
 #include <tuple>
 
 
@@ -82,12 +109,25 @@ int main(int argc, char *argv[])
 
 		cv::Mat frame;
 
-		videofile >> frame;
+		videofile >> frame; //< Grab the image frame
 
 		if (frame.empty ())
 			break;
 
-		cv::imshow("Video frames", frame);
+		Cleaner imgClean ((cv::Mat_<double>(3, 3) << 1.15422732e+03, \
+		                   0.00000000e+00, 6.71627794e+02, 0.00000000e+00, \
+		                   1.14818221e+03, 3.86046312e+02, 0.00000000e+00, \
+		                   0.00000000e+00, 1.00000000e+00),  (cv::Mat_<double>(1, 8) << \
+		                           -2.42565104e-01, -4.77893070e-02, -1.31388084e-03, \
+		                           -8.79107779e-05, 2.20573263e-02, 0, 0, 0));
+
+		imgClean.imgUndistort (frame);
+
+		cv::Mat blurImg;
+
+		blurImg = imgClean.imgSmoothen ();
+
+		cv::imshow("Video frames", blurImg);
 
 		char c = (char) cv::waitKey (0);
 		if (c == 27)

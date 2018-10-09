@@ -16,9 +16,9 @@ Simple starter C++ project with:
 ## Product backlog, iteration backlog and work log
 
 Please click the following link for viewing the product backlog, iteration backlog and work log for this project :
-```
+
 [a link](https://drive.google.com/file/d/1Wt1ujHYjDf0jNyhvaCC1h7imncOoJfra/view?usp=sharing)
-```
+
 ## Standard install via command-line
 ```
 git clone --recursive https://github.com/arunumd/LaneDetection

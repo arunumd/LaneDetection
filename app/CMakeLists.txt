@@ -1,5 +1,5 @@
 #Add executables
-add_executable(shell-app main.cpp Files.cpp)
+add_executable(shell-app main.cpp Files.cpp Cleaner.cpp)
 
 #Find packages
 find_package(OpenCV REQUIRED)
