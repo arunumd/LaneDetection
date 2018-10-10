@@ -17,7 +17,7 @@ Simple starter C++ project with:
 
 Please click the following link for viewing the product backlog, iteration backlog and work log for this project :
 
-[Click here to access the file on Google sheets](https://drive.google.com/file/d/1Wt1ujHYjDf0jNyhvaCC1h7imncOoJfra/view?usp=sharing)
+[Click here to access the file on Google sheets](https://docs.google.com/spreadsheets/d/1mCRqtXPC9wf_Tl6CTOj943SKXVybF-TyjP9tHChutUs/edit?usp=sharing)
 
 ## Standard install via command-line
 ```
