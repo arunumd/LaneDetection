@@ -25,27 +25,27 @@
 *************************************************************************************************/
 #include "Thresholder.hpp"
 
-cv::Mat Thresholder::convertToLab (cv::Mat smoothImg) {
-	inputImg = smoothImg;
-	cv::cvtColor (inputImg, labImage, cv::COLOR_BGR2Lab);
-	return labImage;
+cv::Mat Thresholder::convertToLab(cv::Mat smoothImg) {
+    inputImg = smoothImg;
+    cv::cvtColor(inputImg, labImage, cv::COLOR_BGR2Lab);
+    return labImage;
 }
 
-cv::Mat Thresholder::whiteMaskFunc () {
-	whiteMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
-	cv::inRange (labImage, whiteMin, whiteMax, whiteMask);
-	return whiteMask;
+cv::Mat Thresholder::whiteMaskFunc() {
+    whiteMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
+    cv::inRange(labImage, whiteMin, whiteMax, whiteMask);
+    return whiteMask;
 }
 
-cv::Mat Thresholder::yellowMaskFunc () {
-	yellowMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
-	cv::inRange (labImage, yellowMin, yellowMax, yellowMask);
-	return yellowMask;
+cv::Mat Thresholder::yellowMaskFunc() {
+    yellowMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
+    cv::inRange(labImage, yellowMin, yellowMax, yellowMask);
+    return yellowMask;
 }
 
-cv::Mat Thresholder::combineLanes () {
-	lanesMask = cv::Mat::zeros (lanesMask.size(), CV_8U);
-	cv::bitwise_or (whiteMask, yellowMask, lanesMask);
-	return lanesMask;
+cv::Mat Thresholder::combineLanes() {
+    lanesMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
+    cv::bitwise_or(whiteMask, yellowMask, lanesMask);
+    return lanesMask;
 }
 

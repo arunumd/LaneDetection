@@ -39,18 +39,19 @@
 #include "opencv2/imgcodecs.hpp"
 
 class Cleaner {
-public:
-    Cleaner (cv::Mat cParam, cv::Mat dCoeffs) : camParams(cParam), distCoeffs(dCoeffs) {}
-    ~Cleaner () {};
+ public:
+    Cleaner(cv::Mat cParam, cv::Mat dCoeffs) : \
+    camParams(cParam), distCoeffs(dCoeffs) {}
+    ~Cleaner() {}
 
-    void imgUndistort (cv::Mat rawImg);
+    void imgUndistort(cv::Mat rawImg);
 
-    cv::Mat imgSmoothen ();
+    cv::Mat imgSmoothen();
 
-private:
-    cv::Mat camParams; //< Container for Camera parameters
-    cv::Mat distCoeffs; //< Container for distortion coefficients
-    cv::Mat rawImage; //< Container for input image
-    cv::Mat blurImage; //< Container for denoised image
-    cv::Mat undistortedImage; //< Container for undistorted image
+ private:
+    cv::Mat camParams;   // < Container for Camera parameters
+    cv::Mat distCoeffs;   // < Container for distortion coefficients
+    cv::Mat rawImage;   // < Container for input image
+    cv::Mat blurImage;   // < Container for denoised image
+    cv::Mat undistortedImage;   // < Container for undistorted image
 };

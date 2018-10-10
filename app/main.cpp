@@ -23,7 +23,10 @@
 *              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 *              SOFTWARE.
 *************************************************************************************************/
-
+#include <tuple>
+#include <vector>
+#include <string>
+#include <utility>
 #include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
 #include <opencv2/core/core.hpp>
@@ -37,130 +40,116 @@
 #include "Files.hpp"
 #include "Cleaner.hpp"
 #include "Thresholder.hpp"
-#include <tuple>
 
+namespace FS = boost::filesystem;    //! Short form for boost filesystem
 
-namespace FS = boost::filesystem; //! Short form for boost filesystem
+int main(int argc, char *argv[]) {
+    //  Initialize the Files class as an object
+    Files location;
 
-int main(int argc, char *argv[])
-{
-	//@Brief: We create some short forms for long type names
+    std::string fileAddress;    //  <String variable for holding file name
 
-	// Short form for file name pairs (for example, <200.jpg, 200>)
-	typedef std::pair<FS::path, int> file_entry;
-	// Short form for vector of tuples
-	typedef std::vector<file_entry> vec;
-	// Short form for iterator of type, boost::filesystem::directory_iterator
-	//typedef FS::directory_iterator dirIter;
-	typedef std::vector <cv::DMatch> matchType;
+    /****************************************************************
+    *
+    *  @Brief: The following lines of code perform sanity checks
+    *          for valid filename containing valid input file
+    *
+    ****************************************************************/
 
-	typedef std::vector <cv::KeyPoint> keyPointType;
+    if (argc < 2) {
+        std::cout << "Please enter directory location in command prompt\n";
+        std::getline(std::cin, fileAddress);
+        fileAddress = location.filePicker(fileAddress);
+    } else if (argc == 2) {
+        fileAddress = argv[1];
+        fileAddress = location.filePicker(fileAddress);
+    } else {
+        std::cout << "The file path cannot contain empty spaces\n"
+                  "please enter valid path without spaces.";
+        std::getline(std::cin, fileAddress);
+        fileAddress = location.filePicker(fileAddress);
+    }
 
-	typedef std::vector <cv::Point2f> goodMatchType;
+    /****************************************************************************
+    *
+    *  @Brief: The following lines of code iterate sequentially
+    *          between image frames in input video file and
+    *          perform the following lane detection pipeline :
+    *           1.) Undistort the input image frames;
+    *           2.) Smoothen the undistorted image frames;
+    *           3.) Threshold the smoothened image frames with LAB color space;
+    *           4.) Detect edges corresponding to road lanes;
+    *           5.) Draw Hough Lines on the basis of the detected edges; and
+    *           6.) Mark lanes based on the Hough Lines.
+    *
+    *****************************************************************************/
+    cv::VideoCapture videofile(fileAddress);
 
-	//Initialize the Files class as an object
-	Files location;
+    if (!videofile.isOpened()) {
+        std::cout << "Error opening input video file" << std::endl;
+        return -1;
+    }
 
-	std::string fileAddress; //< String variable for holding file name
+    while (1) {
+        cv::Mat frame;
 
-	/****************************************************************
-	*
-	*  @Brief: The following lines of code perform sanity checks
-	*          for valid filename containing valid input file
-	*
-	****************************************************************/
+        videofile >> frame;  //  <Grab the image frame
 
-	if (argc < 2) {
-		std::cout << "Please enter directory location in command prompt\n";
-		std::getline(std::cin, fileAddress);
-		fileAddress = location.filePicker(fileAddress);
-	}
-	else if (argc == 2) {
-		fileAddress = argv [1];
-		fileAddress = location.filePicker(fileAddress);
-	}
-	else {
-		std::cout << "The file path cannot contain empty spaces\n\
-		please enter valid path without spaces.";
-		std::getline(std::cin, fileAddress);
-		fileAddress = location.filePicker(fileAddress);
-	}
+        if (frame.empty())
+            break;
 
-	/****************************************************************************
-	*
-	*  @Brief: The following lines of code iterate sequentially
-	*          between image frames in input video file and
-	*          perform the following lane detection pipeline :
-	*           1.) Undistort the input image frames;
-	*           2.) Smoothen the undistorted image frames;
-	*           3.) Threshold the smoothened image frames with LAB color space;
-	*           4.) Detect edges corresponding to road lanes;
-	*           5.) Draw Hough Lines on the basis of the detected edges; and
-	*           6.) Mark lanes based on the Hough Lines.
-	*
-	*****************************************************************************/
-	cv::VideoCapture videofile(fileAddress);
+        Cleaner imgClean((cv::Mat_<double>(3, 3) << 1.15422732e+03, \
+                          0.00000000e+00, 6.71627794e+02, 0.00000000e+00, \
+                          1.14818221e+03, 3.86046312e+02, 0.00000000e+00, \
+                          0.00000000e+00, 1.00000000e+00),  \
+                         (cv::Mat_<double>(1, 8) << -2.42565104e-01, \
+                          -4.77893070e-02, -1.31388084e-03, \
+                          -8.79107779e-05, 2.20573263e-02, 0, 0, 0));
 
-	if (!videofile.isOpened ()) {
-		std::cout << "Error opening input video file" << std::endl;
-		return -1;
-	}
+        imgClean.imgUndistort(frame);
 
-	while (1) {
+        cv::Mat blurImg;
 
-		cv::Mat frame;
+        blurImg = imgClean.imgSmoothen();
 
-		videofile >> frame; //< Grab the image frame
+        double L = 255 / 100;
+        double a = 128;
 
-		if (frame.empty ())
-			break;
+        Thresholder lanethresh(cv::Scalar(77 * L, -7 + a, -6 + a), \
+                               cv::Scalar(100 * L, 1 + a, 7 + a), \
+                               cv::Scalar(80 * L, -24 + a, 50 + a), \
+                               cv::Scalar(100 * L, 36 + a, 128 + a));
 
-		Cleaner imgClean ((cv::Mat_<double>(3, 3) << 1.15422732e+03, \
-		                   0.00000000e+00, 6.71627794e+02, 0.00000000e+00, \
-		                   1.14818221e+03, 3.86046312e+02, 0.00000000e+00, \
-		                   0.00000000e+00, 1.00000000e+00),  (cv::Mat_<double>(1, 8) << \
-		                           -2.42565104e-01, -4.77893070e-02, -1.31388084e-03, \
-		                           -8.79107779e-05, 2.20573263e-02, 0, 0, 0));
+        cv::Mat labOutput;
 
-		imgClean.imgUndistort (frame);
+        labOutput = lanethresh.convertToLab(blurImg);
 
-		cv::Mat blurImg;
+        cv::Mat whiteOutput;
 
-		blurImg = imgClean.imgSmoothen ();
+        whiteOutput = lanethresh.whiteMaskFunc();
 
-		Thresholder lanethresh (cv::Scalar(77*255/100, -7+128, -6+128), cv::Scalar(100*255/100, 1+128, 7+128), \
-		                        cv::Scalar(80*255/100, -24+128, 50+128), cv::Scalar(100*255/100, 36+128, 128+128));
+        cv::Mat yellowOutput;
 
-		cv::Mat labOutput;
+        yellowOutput = lanethresh.yellowMaskFunc();
 
-		labOutput = lanethresh.convertToLab (blurImg);
+        cv::Mat lanesMask;
 
-		cv::Mat whiteOutput;
+        lanesMask = lanethresh.combineLanes();
 
-		whiteOutput = lanethresh.whiteMaskFunc ();
+        cv::imshow("White Lanes", whiteOutput);
 
-		cv::Mat yellowOutput;
+        cv::imshow("Yellow Lanes", yellowOutput);
 
-		yellowOutput = lanethresh.yellowMaskFunc ();
+        cv::imshow("Lanes Mask", lanesMask);
 
-		cv::Mat lanesMask;
+        char c = static_cast<char> (cv::waitKey(0));
+        if (c == 27)
+            break;
+    }
 
-		lanesMask = lanethresh.combineLanes ();
+    videofile.release();
 
-		cv::imshow("White Lanes", whiteOutput);
+    cv::destroyAllWindows();
 
-		cv::imshow("Yellow Lanes", yellowOutput);
-
-		cv::imshow("Lanes Mask", lanesMask);
-
-		char c = (char) cv::waitKey (0);
-		if (c == 27)
-			break;
-	}
-
-	videofile.release ();
-
-	cv::destroyAllWindows ();
-
-	return 0;
+    return 0;
 }

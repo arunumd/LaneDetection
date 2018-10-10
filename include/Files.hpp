@@ -36,49 +36,53 @@
 *
 **************************************************************************************************/
 #pragma once
+#include <vector>
+#include <string>
+#include <utility>
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-namespace FS = boost::filesystem; //! Short form for boost filesystem
+namespace FS = boost::filesystem;   //! Short form for boost filesystem
 
 class Files {
+ public:
+    // @Brief: We create some short forms for long type names
 
-public:
+    // Short form for file name pairs (for example, <200.jpg, 200>)
+    typedef std::pair<FS::path, int> file_entry;
 
-	//@Brief: We create some short forms for long type names
+    // Short form for vector of tuples
+    typedef std::vector<file_entry> vec;
 
-	// Short form for file name pairs (for example, <200.jpg, 200>)
-	typedef std::pair<FS::path, int> file_entry;
-	// Short form for vector of tuples
-	typedef std::vector<file_entry> vec;
-	// Short form for iterator of type, boost::filesystem::directory_iterator
-	typedef FS::directory_iterator dirIter;
+    // Short form for iterator of type, boost::filesystem::directory_iterator
+    typedef FS::directory_iterator dirIter;
 
-	Files () {}; //! Default constructor
-	~Files () {}; //!Default destructor
+    Files() {}  // !Default constructor
+    ~Files() {}   // !Default destructor
 
-	//The fileFeeder method reads the command-line args and
-	//iterates with user input until it returns a valid directory
-	std::string fileFeeder(std::string commandArgs);
+    // The fileFeeder method reads the command-line args and
+    // iterates with user input until it returns a valid directory
+    std::string fileFeeder(std::string commandArgs);
 
-	//The filePicker method reads the command-line args and
-	//iterates with user input until it returns a valid file name
-	std::string filePicker(std::string commandArgs);
+    // The filePicker method reads the command-line args and
+    // iterates with user input until it returns a valid file name
+    std::string filePicker(std::string commandArgs);
 
-	//Next we create a string to integer conversion method that
-	//sorts the numerical file names in ascending order.
-	//The return type for this method is "int"
-	int stringToInt (boost::filesystem::path const& pathObj);
+    // Next we create a string to integer conversion method that
+    // sorts the numerical file names in ascending order.
+    // The return type for this method is "int"
+    int stringToInt(boost::filesystem::path const& pathObj);
 
-	//Next we create a path sorting method that sorts the path_vector
-	//into ascending order of files for accessing files in the right order
-	std::vector<std::pair<boost::filesystem::path, int>> pathSorter (boost::filesystem::path const& boostPathObj);
+    // Next we create a path sorting method that sorts the path_vector
+    // into ascending order of files for accessing files in the right order
+    std::vector<std::pair<boost::filesystem::path, int>> \
+            pathSorter(boost::filesystem::path const& boostPathObj);
 
-private:
-	// The path_vec vector is a vector of pairs <path, int>
-	std::vector<std::pair<boost::filesystem::path, int>> path_vec;
-	std::string dirAddress; //< String object for storing valide dir address
-	std::string fileAddress; //< String object for storing valide file address
+ private:
+    // The path_vec vector is a vector of pairs <path, int>
+    std::vector<std::pair<boost::filesystem::path, int>> path_vec;
+    std::string dirAddress;   //< String object for storing valide dir address
+    std::string fileAddress;   //< String object for storing valide file address
 };

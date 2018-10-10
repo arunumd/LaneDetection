@@ -27,13 +27,14 @@
 **************************************************************************************************/
 #include "Cleaner.hpp"
 
-void Cleaner::imgUndistort (cv::Mat rawImg) {
-	rawImage = rawImg;
-	cv::undistort (rawImage, undistortedImage, camParams, distCoeffs);
+void Cleaner::imgUndistort(cv::Mat rawImg) {
+    rawImage = rawImg;
+    cv::undistort(rawImage, undistortedImage, camParams, distCoeffs);
 }
 
-cv::Mat Cleaner::imgSmoothen () {
-	blurImage = cv::Mat::zeros (undistortedImage.size(), undistortedImage.type());
-	cv::GaussianBlur (undistortedImage, blurImage, cv::Size(5, 5), 0, 0);
-	return blurImage;
+cv::Mat Cleaner::imgSmoothen() {
+    blurImage = cv::Mat::zeros(undistortedImage.size(), \
+                               undistortedImage.type());
+    cv::GaussianBlur(undistortedImage, blurImage, cv::Size(5, 5), 0, 0);
+    return blurImage;
 }

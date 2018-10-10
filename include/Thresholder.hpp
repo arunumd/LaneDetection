@@ -37,29 +37,29 @@
 #include "opencv2/imgcodecs.hpp"
 
 class Thresholder {
+ public:
+    Thresholder(cv::Scalar wMin, cv::Scalar wMax, cv::Scalar yMin, \
+                cv::Scalar yMax) : whiteMin(wMin), whiteMax(wMax), \
+                yellowMin(yMin), yellowMax(yMax) {}
 
-public:
-	Thresholder (cv::Scalar wMin, cv::Scalar wMax, cv::Scalar yMin, cv::Scalar yMax) : \
-		whiteMin(wMin), whiteMax(wMax), yellowMin(yMin), yellowMax(yMax) {}
+    ~Thresholder() {}
 
-	~Thresholder () {};
+    cv::Mat convertToLab(cv::Mat smoothImg);
 
-	cv::Mat convertToLab (cv::Mat smoothImg);
+    cv::Mat whiteMaskFunc();
 
-	cv::Mat whiteMaskFunc ();
+    cv::Mat yellowMaskFunc();
 
-	cv::Mat yellowMaskFunc ();
+    cv::Mat combineLanes();
 
-	cv::Mat combineLanes ();
-
-private:
-	cv::Mat inputImg;
-	const cv::Scalar whiteMin; //< Minimum threshold for white lane
-	const cv::Scalar whiteMax; //< Maximum threshold for white lane
-	const cv::Scalar yellowMin; //< Minimum threshold for yellow lane
-	const cv::Scalar yellowMax; //< Maximum threshold for yellow lane
-	cv::Mat whiteMask; //< Container for white lanes
-	cv::Mat yellowMask; //< Container for yellow lanes
-	cv::Mat lanesMask; //< Container for all lanes combined
-	cv::Mat labImage; //< Container for LAB converted input image
+ private:
+    cv::Mat inputImg;
+    const cv::Scalar whiteMin;   // < Minimum threshold for white lane
+    const cv::Scalar whiteMax;   // < Maximum threshold for white lane
+    const cv::Scalar yellowMin;   // < Minimum threshold for yellow lane
+    const cv::Scalar yellowMax;   // < Maximum threshold for yellow lane
+    cv::Mat whiteMask;   // < Container for white lanes
+    cv::Mat yellowMask;   // < Container for yellow lanes
+    cv::Mat lanesMask;   // < Container for all lanes combined
+    cv::Mat labImage;   // < Container for LAB converted input image
 };
