@@ -40,10 +40,26 @@
 #include "Files.hpp"
 #include "Cleaner.hpp"
 #include "Thresholder.hpp"
+#include "LanesMarker.hpp"
 
 namespace FS = boost::filesystem;    //! Short form for boost filesystem
 
 int main(int argc, char *argv[]) {
+    cv::Point p;
+    //  Hardcoding certain parameters like screen area to search for, etc.
+    std::vector<cv::Point> roiPoints;   // <First fillConvexPoly points
+    roiPoints.push_back(cv::Point(527, 491));
+    roiPoints.push_back(cv::Point(812, 491));
+    roiPoints.push_back(cv::Point(1163, 704));
+    roiPoints.push_back(cv::Point(281, 704));
+
+
+    //  Dummy variable for temporary points storage in HoughLines
+    std::pair <cv::Point2d, cv::Point2d> vertices;
+
+    // Variable stores rho, theta from cv::HoughLines()
+    std::vector<cv::Vec2f> lines;
+
     //  Initialize the Files class as an object
     Files location;
 
@@ -91,6 +107,7 @@ int main(int argc, char *argv[]) {
     }
 
     while (1) {
+        lines.clear();   // Emptying the container from previous iteration
         cv::Mat frame;
 
         videofile >> frame;  //  <Grab the image frame
@@ -112,13 +129,10 @@ int main(int argc, char *argv[]) {
 
         blurImg = imgClean.imgSmoothen();
 
-        double L = 255 / 100;
-        double a = 128;
-
-        Thresholder lanethresh(cv::Scalar(77 * L, -7 + a, -6 + a), \
-                               cv::Scalar(100 * L, 1 + a, 7 + a), \
-                               cv::Scalar(80 * L, -24 + a, 50 + a), \
-                               cv::Scalar(100 * L, 36 + a, 128 + a));
+        Thresholder lanethresh(cv::Scalar(198, 0, 0), \
+                               cv::Scalar(255, 255, 255), \
+                               cv::Scalar(165, 130, 130), \
+                               cv::Scalar(255, 255, 255));
 
         cv::Mat labOutput;
 
@@ -136,11 +150,43 @@ int main(int argc, char *argv[]) {
 
         lanesMask = lanethresh.combineLanes();
 
-        cv::imshow("White Lanes", whiteOutput);
-
-        cv::imshow("Yellow Lanes", yellowOutput);
 
         cv::imshow("Lanes Mask", lanesMask);
+
+        cv::Mat firstPolygonArea(lanesMask.rows, lanesMask.cols, CV_8U, cv::Scalar(0));
+
+        cv::Mat interestLanes = cv::Mat::zeros(lanesMask.size(), CV_8U);
+
+        cv::fillConvexPoly(firstPolygonArea, roiPoints, cv::Scalar(1));
+
+        lanesMask.copyTo(interestLanes, firstPolygonArea);
+
+        cv::Mat edges = cv::Mat::zeros(lanesMask.size(), CV_8U);
+
+        cv::Canny(interestLanes, edges, 15, 45, 3);
+
+        imshow("Canny Output", edges);
+
+        cv::HoughLines(edges, lines, 1, CV_PI / 180, 10, 0, 0);
+
+        LanesMarker lanesConsole;
+
+        lanesConsole.lanesSegregator(lines);
+
+        auto left = lanesConsole.leftLanesAverage();
+
+        auto right = lanesConsole.rightLanesAverage();
+
+        cv::Mat black_img = cv::Mat::zeros(labOutput.size(), labOutput.type());
+
+        cv::line(black_img, left.first, left.second, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
+
+        cv::line(black_img, right.first, right.second, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
+
+        cv::imshow("Hough Lines", black_img);
+
+        // /home/arun/Downloads/challenge_video.mp4
+
 
         char c = static_cast<char> (cv::waitKey(0));
         if (c == 27)
