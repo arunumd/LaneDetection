@@ -1,5 +1,5 @@
 #Add executables
-add_executable(shell-app main.cpp Files.cpp Cleaner.cpp Thresholder.cpp LanesMarker.cpp)
+add_executable(shell-app main.cpp Files.cpp Cleaner.cpp Thresholder.cpp LanesMarker.cpp RegionMaker.cpp)
 
 #Find packages
 find_package(OpenCV REQUIRED)
