@@ -1,6 +1,15 @@
 /************************************************************************************************
 * @file      : main file for Autonomous vehicle lane detection using OpenCV and C++
 * @author    : Arun Kumar Devarajulu
+* @brief     : The following lines of code iterate sequentially
+*              between image frames in input video file and
+*              perform the following lane detection pipeline :
+*                 1.) Undistort the input image frames;
+*                 2.) Smoothen the undistorted image frames;
+*                 3.) Threshold the smoothened image frames with LAB color space;
+*                 4.) Detect edges corresponding to road lanes;
+*                 5.) Draw Hough Lines on the basis of the detected edges; and
+*                 6.) Mark lanes based on the Hough Lines.
 * @date      : October 8, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -27,6 +36,8 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <cstdlib>
+#include <cmath>
 #include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
 #include <opencv2/core/core.hpp>
@@ -46,195 +57,265 @@
 namespace FS = boost::filesystem;    //! Short form for boost filesystem
 
 int main(int argc, char *argv[]) {
-	cv::Point p;
-	std::vector<cv::Point> historicLane;
-	//  Hardcoding certain parameters like screen area to search for, etc.
-	std::vector<cv::Point> roiPoints;   // <First fillConvexPoly points
-	roiPoints.push_back(cv::Point(527, 491));
-	roiPoints.push_back(cv::Point(812, 491));
-	roiPoints.push_back(cv::Point(1163, 704));
-	roiPoints.push_back(cv::Point(281, 704));
+    cv::Point p;
+    std::vector<cv::Point> historicLane;
+    cv::Point dummy;
+    dummy.x = 0;
+    dummy.y = 0;
+    int counter = 1;
+    for (int i = 0; i < 4; i++) {
+        historicLane.push_back(dummy);
+    }
+    //  Hardcoding certain parameters like screen area to search for, etc.
+    std::vector<cv::Point> roiPoints;   // <First fillConvexPoly points
+    roiPoints.push_back(cv::Point(527, 491));
+    roiPoints.push_back(cv::Point(812, 491));
+    roiPoints.push_back(cv::Point(1163, 704));
+    roiPoints.push_back(cv::Point(281, 704));
 
 
-	//  Dummy variable for temporary points storage in HoughLines
-	std::pair <cv::Point2d, cv::Point2d> vertices;
+    //  Dummy variable for temporary points storage in HoughLines
+    std::pair <cv::Point2d, cv::Point2d> vertices;
 
-	// Variable stores rho, theta from cv::HoughLines()
-	std::vector<cv::Vec2f> lines;
+    // Variable stores rho, theta from cv::HoughLines()
+    std::vector<cv::Vec2f> lines;
 
-	//  Initialize the Files class as an object
-	Files location;
+    //  Initialize the Files class as an object
+    Files location;
 
-	std::string fileAddress;    //  <String variable for holding file name
+    std::string fileAddress;    //  <String variable for holding file name
 
-	/****************************************************************
-	*
-	*  @Brief: The following lines of code perform sanity checks
-	*          for valid filename containing valid input file
-	*
-	****************************************************************/
+    /****************************************************************
+    *
+    *  @Brief: The following lines of code perform sanity checks
+    *          for valid filename containing valid input file
+    *
+    ****************************************************************/
 
-	if (argc < 2) {
-		std::cout << "Please enter directory location in command prompt\n";
-		std::getline(std::cin, fileAddress);
-		fileAddress = location.filePicker(fileAddress);
-	} else if (argc == 2) {
-		fileAddress = argv[1];
-		fileAddress = location.filePicker(fileAddress);
-	} else {
-		std::cout << "The file path cannot contain empty spaces\n"
-		          "please enter valid path without spaces.";
-		std::getline(std::cin, fileAddress);
-		fileAddress = location.filePicker(fileAddress);
-	}
+    if (argc < 2) {
+        std::cout << "Please enter directory location in command prompt\n";
+        std::getline(std::cin, fileAddress);
+        fileAddress = location.filePicker(fileAddress);
+    } else if (argc == 2) {
+        fileAddress = argv[1];
+        fileAddress = location.filePicker(fileAddress);
+    } else {
+        std::cout << "The file path cannot contain empty spaces\n"
+                  "please enter valid path without spaces.";
+        std::getline(std::cin, fileAddress);
+        fileAddress = location.filePicker(fileAddress);
+    }
 
-	/****************************************************************************
-	*
-	*  @Brief: The following lines of code iterate sequentially
-	*          between image frames in input video file and
-	*          perform the following lane detection pipeline :
-	*           1.) Undistort the input image frames;
-	*           2.) Smoothen the undistorted image frames;
-	*           3.) Threshold the smoothened image frames with LAB color space;
-	*           4.) Detect edges corresponding to road lanes;
-	*           5.) Draw Hough Lines on the basis of the detected edges; and
-	*           6.) Mark lanes based on the Hough Lines.
-	*
-	*****************************************************************************/
-	cv::VideoCapture videofile(fileAddress);
+    cv::VideoCapture videofile(fileAddress);
 
-	if (!videofile.isOpened()) {
-		std::cout << "Error opening input video file" << std::endl;
-		return -1;
-	}
+    if (!videofile.isOpened()) {
+        std::cout << "Error opening input video file" << std::endl;
+        return -1;
+    }
 
-	int frame_width = videofile.get(CV_CAP_PROP_FRAME_WIDTH);
-	int frame_height = videofile.get(CV_CAP_PROP_FRAME_HEIGHT);
+    int videoWidth = videofile.get(CV_CAP_PROP_FRAME_WIDTH);
+    int videoHeight = videofile.get(CV_CAP_PROP_FRAME_HEIGHT);
 
-	cv::VideoWriter video("outcpp.avi", CV_FOURCC('M', 'J', 'P', 'G'), 10, cv::Size(frame_width, frame_height));
+    // Here we create a video writing object to write our output
+    cv::VideoWriter video("../results/LanesDetection.avi",
+                          CV_FOURCC('M', 'J', 'P', 'G'), 10,
+                          cv::Size(videoWidth, videoHeight));
 
-	while (1) {
-		lines.clear();   // Emptying the container from previous iteration
-		cv::Mat frame;
+    while (1) {
+        lines.clear();   // Emptying the container from previous iteration
+        cv::Mat frame;
 
-		videofile >> frame;  //  <Grab the image frame
+        videofile >> frame;  //  <Grab the image frame
 
-		if (frame.empty())
-			break;
+        if (frame.empty())
+            break;
+        /*****************************************************************
+        *
+        *  To begin with, we grab the image frames and do pre-processing
+        *
+        ******************************************************************/
 
-		Cleaner imgClean((cv::Mat_<double>(3, 3) << 1.15422732e+03, \
-		                  0.00000000e+00, 6.71627794e+02, 0.00000000e+00, \
-		                  1.14818221e+03, 3.86046312e+02, 0.00000000e+00, \
-		                  0.00000000e+00, 1.00000000e+00),  \
-		                 (cv::Mat_<double>(1, 8) << -2.42565104e-01, \
-		                  -4.77893070e-02, -1.31388084e-03, \
-		                  -8.79107779e-05, 2.20573263e-02, 0, 0, 0));
+        Cleaner imgClean((cv::Mat_<double>(3, 3) << 1.15422732e+03, \
+                          0.00000000e+00, 6.71627794e+02, 0.00000000e+00, \
+                          1.14818221e+03, 3.86046312e+02, 0.00000000e+00, \
+                          0.00000000e+00, 1.00000000e+00),  \
+                         (cv::Mat_<double>(1, 8) << -2.42565104e-01, \
+                          -4.77893070e-02, -1.31388084e-03, \
+                          -8.79107779e-05, 2.20573263e-02, 0, 0, 0));
 
-		imgClean.imgUndistort(frame);
+        imgClean.imgUndistort(frame);
+        cv::Mat blurImg;
+        blurImg = imgClean.imgSmoothen();
 
-		cv::Mat blurImg;
+        /***************************************************************
+        *
+        *    After pre-processing we mask the white and yellow lanes
+        *
+        ****************************************************************/
 
-		blurImg = imgClean.imgSmoothen();
+        Thresholder lanethresh(cv::Scalar(198, 0, 0), \
+                               cv::Scalar(255, 255, 255), \
+                               cv::Scalar(165, 130, 130), \
+                               cv::Scalar(255, 255, 255));
 
-		Thresholder lanethresh(cv::Scalar(198, 0, 0), \
-		                       cv::Scalar(255, 255, 255), \
-		                       cv::Scalar(165, 130, 130), \
-		                       cv::Scalar(255, 255, 255));
+        cv::Mat labOutput;
+        labOutput = lanethresh.convertToLab(blurImg);
 
-		cv::Mat labOutput;
+        cv::Mat whiteOutput;
+        whiteOutput = lanethresh.whiteMaskFunc();
 
-		labOutput = lanethresh.convertToLab(blurImg);
+        cv::Mat yellowOutput;
+        yellowOutput = lanethresh.yellowMaskFunc();
 
-		cv::Mat whiteOutput;
+        cv::Mat lanesMask;
+        lanesMask = lanethresh.combineLanes();
+        cv::imshow("Lanes Mask", lanesMask);
 
-		whiteOutput = lanethresh.whiteMaskFunc();
+        /****************************************************************
+        *
+        *  After masking the lanes we get rid of the unnecessary details
+        *  like horizon, trees, and other details on the sides of the
+        *  roads which can likely interfere with proper detection of lanes
+        *
+        *****************************************************************/
 
-		cv::Mat yellowOutput;
+        cv::Mat firstPolygonArea(lanesMask.rows, lanesMask.cols, \
+                                 CV_8U, cv::Scalar(0));
+        cv::Mat interestLanes = cv::Mat::zeros(lanesMask.size(), CV_8U);
+        cv::fillConvexPoly(firstPolygonArea, roiPoints, cv::Scalar(1));
+        lanesMask.copyTo(interestLanes, firstPolygonArea);
 
-		yellowOutput = lanethresh.yellowMaskFunc();
+        /*****************************************************************
+        *
+        *   Later we employ a gradient based edge detector to detect
+        *   sharp edges which will be our lanes
+        *
+        ******************************************************************/
 
-		cv::Mat lanesMask;
+        cv::Mat edges = cv::Mat::zeros(lanesMask.size(), CV_8U);
+        cv::Canny(interestLanes, edges, 15, 45, 3);
+        imshow("Canny Output", edges);
 
-		lanesMask = lanethresh.combineLanes();
+        /******************************************************************
+        *
+        *  Later we strengthen the detected edges by drawinng Hough Lines
+        *  on top of their loci
+        *
+        *******************************************************************/
 
-		cv::imshow("Lanes Mask", lanesMask);
+        cv::HoughLines(edges, lines, 1, CV_PI / 180, 10, 0, 0);
+        LanesMarker lanesConsole;
+        lanesConsole.lanesSegregator(lines);
+        auto left = lanesConsole.leftLanesAverage();
+        auto right = lanesConsole.rightLanesAverage();
+        cv::Mat black_img = cv::Mat::zeros(labOutput.size(), \
+                                           labOutput.type());
+        cv::line(black_img, left.first, left.second, cv::Scalar(0, 0, 255), \
+                 3, cv::LINE_AA);
+        cv::line(black_img, right.first, right.second, cv::Scalar(0, 0, 255), \
+                 3, cv::LINE_AA);
 
-		cv::Mat firstPolygonArea(lanesMask.rows, lanesMask.cols, CV_8U, cv::Scalar(0));
+        /*********************************************************************
+        *
+        *  Later we draw polygonal region on the road which denotes a region
+        *  within the bounds of two lanes in front of the vehicle
+        *
+        *********************************************************************/
 
-		cv::Mat interestLanes = cv::Mat::zeros(lanesMask.size(), CV_8U);
+        cv::Mat polygonLayer = cv::Mat::zeros(labOutput.size(), \
+                                              labOutput.type());
+        cv::Mat linesCanny = polygonLayer.clone();
+        black_img.copyTo(polygonLayer, firstPolygonArea);
+        cv::Canny(polygonLayer, linesCanny, 70, 210, 3);
+        cv::Mat binaryRegions;
+        cv::findNonZero(linesCanny, binaryRegions);
 
-		cv::fillConvexPoly(firstPolygonArea, roiPoints, cv::Scalar(1));
+        RegionMaker polyMaker;
+        auto polyRegionVertices = polyMaker.getPolygonVertices(binaryRegions);
+        cv::Mat dummy = cv::Mat::zeros(labOutput.size(), labOutput.type());
+        for (auto& vertex : polyRegionVertices) {
+            if (vertex.x == 0 || vertex.y == 0) {
+                polyRegionVertices = historicLane;
+                break;
+            } else {}
+        }
+        if (counter > 1 && ((std::abs(polyRegionVertices.at(2).x - \
+                                      historicLane.at(2).x) > 10) ||
+                            std::abs(polyRegionVertices.at(3).x - \
+                                     historicLane.at(3).x) > 10)) {
+            polyRegionVertices = historicLane;
+        }
 
-		lanesMask.copyTo(interestLanes, firstPolygonArea);
+        historicLane = polyRegionVertices;
 
-		cv::Mat edges = cv::Mat::zeros(lanesMask.size(), CV_8U);
+        /*********************************************************************
+        *
+        *  Now we extrapolate our polygon to fill a desired area on screen
+        *
+        *********************************************************************/
 
-		cv::Canny(interestLanes, edges, 15, 45, 3);
+        auto newSlopeLeft = static_cast<float>(polyRegionVertices.at(0).y - \
+                                               polyRegionVertices.at(3).y) /
+                            static_cast<float>(polyRegionVertices.at(0).x - \
+                                               polyRegionVertices.at(3).x);
 
-		imshow("Canny Output", edges);
+        auto newSlopeRight = static_cast<float>(polyRegionVertices.at(1).y - \
+                                                polyRegionVertices.at(2).y) /
+                             static_cast<float>(polyRegionVertices.at(1).x - \
+                                                polyRegionVertices.at(2).x);
 
-		cv::HoughLines(edges, lines, 1, CV_PI / 180, 10, 0, 0);
+        auto leftIntercept = static_cast<float>(polyRegionVertices.at(0).y) - \
+                             static_cast<float>(newSlopeLeft) * \
+                             static_cast<float>(polyRegionVertices.at(0).x);
 
-		LanesMarker lanesConsole;
+        auto rightIntercept = static_cast<float>(polyRegionVertices.at(1).y) - \
+                              (static_cast<float>(newSlopeRight) * \
+                               static_cast<float>(polyRegionVertices.at(1).x));
 
-		lanesConsole.lanesSegregator(lines);
+        polyRegionVertices.at(0).x = static_cast<double>((550 - \
+                                     leftIntercept) / newSlopeLeft);
+        polyRegionVertices.at(0).y = 550.0;
+        polyRegionVertices.at(1).x = static_cast<double>((550 - \
+                                     rightIntercept) / newSlopeRight);
+        polyRegionVertices.at(1).y = 550.0;
 
-		auto left = lanesConsole.leftLanesAverage();
+        cv::fillConvexPoly(frame, polyRegionVertices, \
+                           cv::Scalar(0, 255, 0), CV_AA, 0);
 
-		auto right = lanesConsole.rightLanesAverage();
+        double deviationLeft = std::abs(newSlopeLeft - 1);
 
-		cv::Mat black_img = cv::Mat::zeros(labOutput.size(), labOutput.type());
+        double deviationRight = std::abs(newSlopeRight - 1);
 
-		cv::line(black_img, left.first, left.second, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
+        /*********************************************************************
+        *
+        *                   At the end we make turn predictions
+        *
+        *********************************************************************/
 
-		cv::line(black_img, right.first, right.second, cv::Scalar(0, 0, 255), 3, cv::LINE_AA);
+        if (deviationRight > deviationLeft) {
+            cv::putText(frame, "Left turn ahead", cv::Point(30, 30),
+                        cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, \
+                        cv::Scalar(200, 200, 250), 1, CV_AA);
+        } else if (deviationRight < deviationLeft) {
+            cv::putText(frame, "Right turn ahead", cv::Point(30, 30),
+                        cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, \
+                        cv::Scalar(200, 200, 250), 1, CV_AA);
+        } else {}
 
-		cv::Mat polygonLayer = cv::Mat::zeros(labOutput.size(), labOutput.type());
+        video.write(frame);
 
-		cv::Mat linesCanny = polygonLayer.clone();
+        cv::imshow("Lines canny", frame);
 
-		black_img.copyTo(polygonLayer, firstPolygonArea);
+        counter++;
 
-		cv::Canny(polygonLayer, linesCanny, 70, 210, 3);
+        char c = static_cast<char> (cv::waitKey(20));
+        if (c == 27)
+            break;
+    }
+    video.release();
+    videofile.release();
 
-		cv::Mat binaryRegions;
+    cv::destroyAllWindows();
 
-		cv::findNonZero(linesCanny, binaryRegions);
-
-		RegionMaker polyMaker;
-
-		auto polyRegionVertices = polyMaker.getPolygonVertices(binaryRegions);
-
-		cv::Mat dummy = cv::Mat::zeros(labOutput.size(), labOutput.type());
-
-		for (auto& vertex : polyRegionVertices) {
-			if (vertex.x == 0 || vertex.y == 0) {
-				polyRegionVertices = historicLane;
-				break;
-			} else {};
-		}
-
-		cv::fillConvexPoly(frame, polyRegionVertices, cv::Scalar(255, 0, 0), CV_AA, 0);
-
-		historicLane = polyRegionVertices;
-
-		video.write(frame);
-
-		cv::imshow("Lines canny", frame);
-
-		cv::imshow("Hough Lines", black_img);
-
-		// /home/arun/Downloads/challenge_video.mp4
-
-
-		char c = static_cast<char> (cv::waitKey(0));
-		if (c == 27)
-			break;
-	}
-	video.release();
-	videofile.release();
-
-	cv::destroyAllWindows();
-
-	return 0;
+    return 0;
 }

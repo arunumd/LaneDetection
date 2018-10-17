@@ -44,7 +44,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 class Cleaner {
-public:
+ public:
     /**
     * @brief  : The default constructor for Cleaner class
     * @params : cParam is the camera Parameters
@@ -70,7 +70,7 @@ public:
     *****/
     cv::Mat imgSmoothen();
 
-private:
+ private:
     cv::Mat camParams;   // < Container for Camera parameters
     cv::Mat distCoeffs;   // < Container for distortion coefficients
     cv::Mat rawImage;   // < Container for input image

@@ -41,9 +41,9 @@
 #include "opencv2/imgcodecs.hpp"
 
 class RegionMaker {
-public:
-	RegionMaker () {} // <Default constructor
-	~RegionMaker () {}  // <Default destructor
+ public:
+    RegionMaker() {}  // <Default constructor
+    ~RegionMaker() {}  // <Default destructor
 
     /***
     *@brief  : The getPolygonVertices() function is used for fetching a vector of
@@ -52,15 +52,16 @@ public:
     *          ones in HoughLine regions and zeros everywhere else
     *@return : The output from this function is a vector of polygon points
     *****/
-	std::vector<cv::Point> getPolygonVertices(cv::Mat binaryPoints);
+    std::vector<cv::Point> getPolygonVertices(cv::Mat binaryPoints);
 
-private:
-	cv::Point polyVertex1;  // <Variable for storing polygon bottom right corner
-	cv::Point polyVertex2;  // <Variable for storing polygon top left corner
-	cv::Point polyVertex3;  // <Variable for storing polygon top right corner
-	cv::Point polyVertex4;  // <Variable for storing polygon bottom left corner
-	double low = 0;  // <Minimum assumption for optimization problem
-	double high = 5000;  // <Maximum assumption for optimization problem
-	std::vector<cv::Point> polygonVertices;  // <Container for storing polygon vertices
+ private:
+    cv::Point polyVertex1;  // <Variable for storing polygon bottom right corner
+    cv::Point polyVertex2;  // <Variable for storing polygon top left corner
+    cv::Point polyVertex3;  // <Variable for storing polygon top right corner
+    cv::Point polyVertex4;  // <Variable for storing polygon bottom left corner
+    double low = 0;  // <Minimum assumption for optimization problem
+    double high = 5000;  // <Maximum assumption for optimization problem
+    // Container for storing polygon vertices
+    std::vector<cv::Point> polygonVertices;
 };
 
