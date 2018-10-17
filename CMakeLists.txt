@@ -7,6 +7,7 @@ project (Project1)
 #Find required packages
 find_package(OpenCV REQUIRED)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Add project cmake modules to path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)

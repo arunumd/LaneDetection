@@ -33,16 +33,16 @@ Boost Cpp Library can be obtained by following the installation steps provided i
 OpenCV3 can be installed by following the detailed installation procedure given in this website :
 [Click here to navigate to the official opencv installation page](https://www.learnopencv.com/install-opencv3-on-ubuntu/)
 
+CMake build system can be installed by typing this command below in your Ubuntu terminal :
+```
+sudo apt-get install cmake
+```
+
 ## Product backlog, iteration backlog and work log
 
 Please click the following link for viewing the product backlog, iteration backlog and work log for this project :
 
 [Click here to access the file on Google sheets](https://docs.google.com/spreadsheets/d/1mCRqtXPC9wf_Tl6CTOj943SKXVybF-TyjP9tHChutUs/edit?usp=sharing)
-
-CMake build system can be installed by typing this command below in your Ubuntu terminal :
-```
-sudo apt-get install cmake
-```
 
 ## Standard install via command-line
 ```
@@ -54,6 +54,7 @@ cmake ..
 make
 Run tests: ./test/cpp-test
 Run program: ./app/shell-app
+When prompted enter the full path of the input video file "challenge_video.mp4" present in the input folder in repository root
 ```
 
 ## Building for code coverage
