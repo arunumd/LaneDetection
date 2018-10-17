@@ -21,7 +21,22 @@ Every method has its own advantages and disadvantages. Neural networks are suppo
 
 Segmentation is the process of isolating colors of interest from the remaining details present in a scene (image). For any segmentation we apply some kind of thresholding operation based on our colors of interest. In this project, we apply thresholds for white and yellow colors in Lab color space. While there are several other color spaces like HSV, HSL, RGB, BGR, etc., Lab color space is quite unique in that it has a separate channel dedicated only for lightness and darkness of an image. The remaining two channels are for the colors of the image. Hence this color space gives an operational ease to the user and gives more control to the user during thresholding. 
 
-After segmentation of the white and yellow lanes, we obtain a binary image wherein the regions of the image with the lanes become ones and all other regions in the image become zeros. After this step, the process is quite easy. We apply a gradient based edge detector like the Canny edge detector and then we apply Hough transform to obtain Hough lines on top of the edges. Later, we manipulate the slopes of the obtained Hough lines and mark the lanes. We also make announcements like the road conditions ahead (left turn, right turn, etc.).
+**The image shown below is the result obtained from Lab color thresholding operation**
+[!LabThreshold](http://i63.tinypic.com/ogcuhw.png)
+
+After segmentation of the white and yellow lanes, we obtain a binary image wherein the regions of the image with the lanes become ones and all other regions in the image become zeros. After this step, the process is quite easy. We apply a gradient based edge detector like the Canny edge detector and then we apply Hough transform to obtain Hough lines on top of the edges. 
+
+**A sample screenshot of the canny edge detection for this project is shown below**
+[!CannyOutput](http://i64.tinypic.com/25gdzd3.png)
+
+
+**The image shown below is a sample screenshot of HoughLines detection**
+[!HoughDetection](http://i63.tinypic.com/2qb7tki.png)
+
+Later, we manipulate the slopes of the obtained Hough lines and mark the lanes. We also make announcements like the road conditions ahead (left turn, right turn, etc.).
+
+**The following image is the final result of lane detection**
+[!Lanedetection](http://i65.tinypic.com/6t20ly.png)
 
 ## Dependencies
 
@@ -56,6 +71,22 @@ Run tests: ./test/cpp-test
 Run program: ./app/shell-app
 When prompted enter the full path of the input video file "challenge_video.mp4" present in the input folder in repository root
 ```
+
+## Doxygen documentation
+
+If you don't have doxygen already installed on your computer, then please do this install step below :
+```
+sudo apt-get install doxygen
+```
+
+After ensuring doxygen is installed in your computer, you can now create doxygen style documentation using this syntax below:
+```
+cd <path to repository>
+cd doxygen
+doxygen doxygenSettings.conf
+```
+
+Now you should be able to find the doxygen generated documentation files in ../doxygen/html and ../doxygen/latex folders
 
 ## Building for code coverage
 ```

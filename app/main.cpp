@@ -214,6 +214,7 @@ int main(int argc, char *argv[]) {
                  3, cv::LINE_AA);
         cv::line(black_img, right.first, right.second, cv::Scalar(0, 0, 255), \
                  3, cv::LINE_AA);
+        imshow("Hough Output", black_img);
 
         /*********************************************************************
         *
@@ -304,7 +305,7 @@ int main(int argc, char *argv[]) {
 
         video.write(frame);
 
-        cv::imshow("Lines canny", frame);
+        cv::imshow("Final Lane Detection", frame);
 
         counter++;
 
