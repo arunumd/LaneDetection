@@ -1,6 +1,11 @@
 /************************************************************************************************
 * @file      : Header file for image cleaner  class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The Cleaner class is used for performing the following operations on input
+*              image frames:
+*                1.) Undistort the input image frame using camera parameters and distortion
+*                    coefficients; and
+*                2.) Smoothen the undistorted image using a gaussian filter.
 * @date      : October 8, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -39,16 +44,33 @@
 #include "opencv2/imgcodecs.hpp"
 
 class Cleaner {
- public:
+public:
+    /**
+    * @brief  : The default constructor for Cleaner class
+    * @params : cParam is the camera Parameters
+    * @params : dCoeffs is the distortion coefficients
+    *
+    ****/
     Cleaner(cv::Mat cParam, cv::Mat dCoeffs) : \
-    camParams(cParam), distCoeffs(dCoeffs) {}
-    ~Cleaner() {}
+        camParams(cParam), distCoeffs(dCoeffs) {}
+    ~Cleaner() {}   // <Default destructor for Cleaner class
 
+    /**
+    *
+    * @brief  : The function imgUndistort is used for undistorting an input image
+    * @params : rawImg is the input image from video frames
+    *
+    ****/
     void imgUndistort(cv::Mat rawImg);
 
+    /***
+    *
+    * @brief  : the function imgSmoothen applies a gaussian blur on undistorted image
+    *
+    *****/
     cv::Mat imgSmoothen();
 
- private:
+private:
     cv::Mat camParams;   // < Container for Camera parameters
     cv::Mat distCoeffs;   // < Container for distortion coefficients
     cv::Mat rawImage;   // < Container for input image

@@ -1,6 +1,9 @@
 /************************************************************************************************
 * @file      : Implementation file for LanesMarker class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The LanesMarker class is used for segregating all the HoughLines into left and right
+*              categories and then obtain unique left and right lanes by averaging according to
+*              positive and negative slopes
 * @date      : October 14, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -25,9 +28,17 @@
 *************************************************************************************************/
 #include "LanesMarker.hpp"
 
-typedef std::pair<cv::Point2d, cv::Point2d> pointsPair;
-typedef std::vector<pointsPair> laneType;
-typedef std::vector<cv::Vec2f> hType;
+typedef std::pair<cv::Point2d, cv::Point2d> pointsPair;  //<Short form for a pair of cv::Point2d
+typedef std::vector<pointsPair> laneType;  // <Short form for a vector of type pointsPair
+typedef std::vector<cv::Vec2f> hType;  // <Short form for a vector of type cv::Vec2f
+
+/***
+*@brief  : The lanesSegregator() function takes in the cv::HoughLines function
+*          output and classifies the HoughLines as belonging to left lane and
+*          the right lane based on the slopes.
+*@params : The input parameter hLines is of type hType as defined in the typedef
+*          statement above
+*****/
 
 void LanesMarker::lanesSegregator(hType hLines) {
 		for (auto& item : hLines) {
@@ -53,6 +64,13 @@ void LanesMarker::lanesSegregator(hType hLines) {
 	}
 }
 
+/***
+*@brief  : The leftLanesAverage() function is used for averaging all the left lanes
+*          to get only one unique left lane
+*@return : The output returned by this function is a pair of top and bottom points
+*          belonging to the left lane
+******/
+
 pointsPair LanesMarker::leftLanesAverage() {
 	for (auto& item : lLane) {
 		cv::Point2d V1;
@@ -76,6 +94,12 @@ pointsPair LanesMarker::leftLanesAverage() {
 	return std::make_pair(avgPoint1Left, avgPoint2Left);
 }
 
+/***
+*@brief  : The rightLanesAverage() function is used for averaging all the right lanes
+*          to get only one unique right lane
+*@return : The output returned by this function is a pair of top and bottom points
+*          belonging to the right lane
+******/
 pointsPair LanesMarker::rightLanesAverage() {
 	for (auto& item : rLane) {
 		cv::Point2d V1;
@@ -97,12 +121,4 @@ pointsPair LanesMarker::rightLanesAverage() {
 	avgPoint2Right.y = pt2yRight / countRight;
 
 	return std::make_pair(avgPoint1Right, avgPoint2Right);
-}
-
-laneType LanesMarker::getLeftLane() {
-	return rLane;
-}
-
-laneType LanesMarker::getRightLane() {
-	return rLane;
 }

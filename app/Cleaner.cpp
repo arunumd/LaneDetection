@@ -1,6 +1,11 @@
 /************************************************************************************************
 * @file      : Implementation for image cleaner  class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The Cleaner class is used for performing the following operations on input
+*              image frames:
+*                1.) Undistort the input image frame using camera parameters and distortion
+*                    coefficients; and
+*                2.) Smoothen the undistorted image using a gaussian filter.
 * @date      : October 8, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -27,11 +32,25 @@
 **************************************************************************************************/
 #include "Cleaner.hpp"
 
+/***
+* @brief  : The imgUndistort function takes in the raw image and undistorts the image
+*           using cv::undistort() function. The parameters camParams, distCoeffs are
+*           initialised by the Class constructor
+* @params : The parameter rawImg is the input image frame
+****/
 void Cleaner::imgUndistort(cv::Mat rawImg) {
     rawImage = rawImg;
     cv::undistort(rawImage, undistortedImage, camParams, distCoeffs);
 }
 
+/***
+* @brief  : The imgSmoothen function creates a new image which is a gaussin blurred version
+*           of the undistorted image. For this we first create a matrix of zeros of the size
+*           and type of undistorted image. Later we pass this matrix to the cv::GaussianBlur()
+*           function. A kernel size of (5, 5) is used here. At the end of the GaussianBlur
+*           operation, the blurImage will be a an undistorted image with a Gaussian Blur.
+* @return : The blured image
+****/
 cv::Mat Cleaner::imgSmoothen() {
     blurImage = cv::Mat::zeros(undistortedImage.size(), \
                                undistortedImage.type());

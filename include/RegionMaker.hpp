@@ -1,6 +1,8 @@
 /************************************************************************************************
 * @file      : Header file for RegionMaker class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The RegionMaker class is used for creating a polygonal region based on
+*              binary points fetched from HoughLine regions
 * @date      : October 15, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -40,19 +42,25 @@
 
 class RegionMaker {
 public:
-	RegionMaker () {}
-	~RegionMaker () {}
+	RegionMaker () {} // <Default constructor
+	~RegionMaker () {}  // <Default destructor
 
+    /***
+    *@brief  : The getPolygonVertices() function is used for fetching a vector of
+    *          polygon corners from an input matrix of points
+    *@params : The parameter cv::Mat binaryPoints is an input image matrix with
+    *          ones in HoughLine regions and zeros everywhere else
+    *@return : The output from this function is a vector of polygon points
+    *****/
 	std::vector<cv::Point> getPolygonVertices(cv::Mat binaryPoints);
 
 private:
-	cv::Mat inputPoints;
-	cv::Point polyVertex1;
-	cv::Point polyVertex2;
-	cv::Point polyVertex3;
-	cv::Point polyVertex4;
-	double low = 0;
-	double high = 5000;
-	std::vector<cv::Point> polygonVertices;
+	cv::Point polyVertex1;  // <Variable for storing polygon bottom right corner
+	cv::Point polyVertex2;  // <Variable for storing polygon top left corner
+	cv::Point polyVertex3;  // <Variable for storing polygon top right corner
+	cv::Point polyVertex4;  // <Variable for storing polygon bottom left corner
+	double low = 0;  // <Minimum assumption for optimization problem
+	double high = 5000;  // <Maximum assumption for optimization problem
+	std::vector<cv::Point> polygonVertices;  // <Container for storing polygon vertices
 };
 

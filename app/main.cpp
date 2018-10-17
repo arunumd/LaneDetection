@@ -47,6 +47,7 @@ namespace FS = boost::filesystem;    //! Short form for boost filesystem
 
 int main(int argc, char *argv[]) {
 	cv::Point p;
+	std::vector<cv::Point> historicLane;
 	//  Hardcoding certain parameters like screen area to search for, etc.
 	std::vector<cv::Point> roiPoints;   // <First fillConvexPoly points
 	roiPoints.push_back(cv::Point(527, 491));
@@ -106,6 +107,11 @@ int main(int argc, char *argv[]) {
 		std::cout << "Error opening input video file" << std::endl;
 		return -1;
 	}
+
+	int frame_width = videofile.get(CV_CAP_PROP_FRAME_WIDTH);
+	int frame_height = videofile.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+	cv::VideoWriter video("outcpp.avi", CV_FOURCC('M', 'J', 'P', 'G'), 10, cv::Size(frame_width, frame_height));
 
 	while (1) {
 		lines.clear();   // Emptying the container from previous iteration
@@ -201,7 +207,18 @@ int main(int argc, char *argv[]) {
 
 		cv::Mat dummy = cv::Mat::zeros(labOutput.size(), labOutput.type());
 
+		for (auto& vertex : polyRegionVertices) {
+			if (vertex.x == 0 || vertex.y == 0) {
+				polyRegionVertices = historicLane;
+				break;
+			} else {};
+		}
+
 		cv::fillConvexPoly(frame, polyRegionVertices, cv::Scalar(255, 0, 0), CV_AA, 0);
+
+		historicLane = polyRegionVertices;
+
+		video.write(frame);
 
 		cv::imshow("Lines canny", frame);
 
@@ -214,7 +231,7 @@ int main(int argc, char *argv[]) {
 		if (c == 27)
 			break;
 	}
-
+	video.release();
 	videofile.release();
 
 	cv::destroyAllWindows();

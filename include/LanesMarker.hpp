@@ -1,6 +1,9 @@
 /************************************************************************************************
 * @file      : Header file for LanesMarker class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The LanesMarker class is used for segregating all the HoughLines into left and right
+*              categories and then obtain unique left and right lanes by averaging according to
+*              positive and negative slopes
 * @date      : October 14, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -42,41 +45,53 @@
 #include "opencv2/imgcodecs.hpp"
 
 class LanesMarker {
-	typedef std::pair<cv::Point2d, cv::Point2d> pointsPair;
-	typedef std::vector<pointsPair> laneType;
-	typedef std::vector<cv::Vec2f> hType;
+	typedef std::pair<cv::Point2d, cv::Point2d> pointsPair;  //<Short form for a pair of cv::Point2d
+	typedef std::vector<pointsPair> laneType;  // <Short form for a vector of type pointsPair
+	typedef std::vector<cv::Vec2f> hType;  // <Short form for a vector of type cv::Vec2f
 public:
 	LanesMarker () {}  // Default constructor
 	~LanesMarker () {}  // Default destructor
+
+	/***
+	*@brief  : The lanesSegregator() is used for segregating the left and right lanes based on
+	*          positive and negative slopes of HoughLines
+	*@params : The parameter hLines is the output obtained from cv::HoughLines function. It is
+	*          nothing but an array of pairs containing rho and theta
+	*****/
 	void lanesSegregator(hType hLines);
 
-	laneType getLeftLane();
-
-	laneType getRightLane();
-
+	/***
+	*@brief  : The leftLanesAverage() is used for averaging the left lanes based on negative slopes
+	******/
 	pointsPair leftLanesAverage();
 
+	/***
+	*@brief  : The rightLanesAverage() is used for averaging the left lanes based on positive slopes
+	******/
 	pointsPair rightLanesAverage();
 
 private:
-	float rho = 0;
-	float theta = 0;
-	cv::Point2d pt1, pt2;
-	double slope = 0;
-	double a = 0, b = 0;
-	double x0, y0;
-	std::pair <cv::Point2d, cv::Point2d> vertices;
-	laneType lLane, rLane;
-	double countLeft = 0;
-	double countRight = 0;
-	double pt1xLeft = 0;
-	double pt1xRight = 0;
-	double pt2xLeft = 0;
-	double pt2xRight = 0;
-	double pt1yLeft = 0;
-	double pt1yRight = 0;
-	double pt2yLeft = 0;
-	double pt2yRight = 0;
-	cv::Point2d avgPoint1Left, avgPoint2Left;
-	cv::Point2d avgPoint1Right, avgPoint2Right;
+	float rho = 0;  // <Variable for temporary storage of HoughLines rho
+	float theta = 0;  // <Variable for temporary storage of HoughLines theta
+	cv::Point2d pt1, pt2;  // <Dummy variables for extrapolating vertices based on rho and theta
+	double slope = 0;  // <Variable for calculating slope
+	double a = 0, b = 0;  // <variables for temporary storage of intercepts
+	double x0, y0;  // <Variables for temporary storage of intercepts
+	std::pair <cv::Point2d, cv::Point2d> vertices;  // Variables for pushing points to vector
+	laneType lLane, rLane;  // <Containers for storing all the left and right lanes
+	double countLeft = 0;  //  <Variable for count of left lanes
+	double countRight = 0;  //  <Variable for count of right lanes
+	double pt1xLeft = 0;  // <Variable for summing left lanes top x co-ordinates
+	double pt1xRight = 0;  // <Variable for summing right lanes top x co-ordinates
+	double pt2xLeft = 0;  // <Variable for summing left lanes bottom x co-ordinates
+	double pt2xRight = 0;  // <Variable for summing right lanes bottom x co-ordinates
+	double pt1yLeft = 0;  // <Variable for summing left lanes top y co-ordinates
+	double pt1yRight = 0;  // <Variable for summing right lanes top y co-ordinates
+	double pt2yLeft = 0;  // <Variable for summing left lanes bottom y co-ordinates
+	double pt2yRight = 0;  // <Variable for summing right lanes bottom y co-ordinates
+	cv::Point2d avgPoint1Left, avgPoint2Left;  // <Variables for storing final best points
+	//  for left lanes
+	cv::Point2d avgPoint1Right, avgPoint2Right;  // <Variables for storing final best points
+	//  for right lanes
 };
+

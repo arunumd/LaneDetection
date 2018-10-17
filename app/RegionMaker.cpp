@@ -1,6 +1,8 @@
 /************************************************************************************************
 * @file      : Implementation file for RegionMaker class
 * @author    : Arun Kumar Devarajulu
+* @brief     : The RegionMaker class is used for creating a polygonal region based on
+*              binary points fetched from HoughLine regions
 * @date      : October 15, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
@@ -24,6 +26,16 @@
 *              SOFTWARE.
 *************************************************************************************************/
 #include "RegionMaker.hpp"
+
+/****
+*@brief  : The getPolygonVertices() function reads the points which are ones in the
+*          input image and check for the x-coordinates for y-coordinates of interest.
+*          The best coordinates are picked and pushed to the polygonvertices container
+*@params : The input parameter cv::Mat binaryPoints is a binary image containing ones
+*          in regions where there were HoughLines and zeros everywhere else
+*@return : The output returned by this function is a container with polygon vertices
+*          in the right sequence for feeding into cv::fillConvexPoly()
+******/
 
 std::vector<cv::Point> RegionMaker::getPolygonVertices(cv::Mat binaryPoints) {
 	for (size_t i = 0; i < binaryPoints.total(); i++) {
@@ -53,8 +65,6 @@ std::vector<cv::Point> RegionMaker::getPolygonVertices(cv::Mat binaryPoints) {
 	polygonVertices.push_back(polyVertex3);
 	polygonVertices.push_back(polyVertex4);
 	polygonVertices.push_back(polyVertex1);
-
-	std::cout << polyVertex2 << polyVertex3 << polyVertex4 << polyVertex1 << std::endl;
 
 	return polygonVertices;
 }
