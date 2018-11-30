@@ -38,7 +38,6 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 #Add sub-directories
 add_subdirectory(app)
 add_subdirectory(test)
-add_subdirectory(vendor/googletest/googletest)
 add_subdirectory(vendor/googletest/googlemock)
 
 #Add executables
