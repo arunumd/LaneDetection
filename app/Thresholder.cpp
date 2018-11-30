@@ -27,51 +27,24 @@
 *************************************************************************************************/
 #include "Thresholder.hpp"
 
-/***
-*@brief  : The convertToLab() converts an input BGR image to an output L*a*b
-*          image using the OpenCV function cv::cvtColor.
-*@params : The parameter smoothImg is the GaussianBlurred image
-*@return : The return value is a cv::Mat containing the L*a*b image
-*****/
 cv::Mat Thresholder::convertToLab(cv::Mat smoothImg) {
     inputImg = smoothImg;
     cv::cvtColor(inputImg, labImage, cv::COLOR_BGR2Lab);
     return labImage;
 }
 
-/***
-*@brief  : The whiteMaskFunc() creates a binary thresholded image based on the
-*          white color threshold range for the white lanes. For accomplishing this
-*          task we use the OpenCV cv::inrange function
-*@return : The output returned by this function is a binary image with ones in white
-*          lanes region and zeros everywhere else
-*****/
 cv::Mat Thresholder::whiteMaskFunc() {
     whiteMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
     cv::inRange(labImage, whiteMin, whiteMax, whiteMask);
     return whiteMask;
 }
 
-/***
-*@brief  : The yellowMaskFunc() creates a binary thresholded image based on the
-*          yellow color threshold range for the yellow lanes. For accomplishing this
-*          task we use the OpenCV cv::inrange function
-*@return : The output returned by this function is a binary image with ones in yellow
-*          lanes region and zeros everywhere else
-*****/
 cv::Mat Thresholder::yellowMaskFunc() {
     yellowMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
     cv::inRange(labImage, yellowMin, yellowMax, yellowMask);
     return yellowMask;
 }
 
-/***
-*@brief  : The combineLanes() is used for combining the outputs obtained from the
-*          whiteMaskFunc() and the yellowMaskFunc(). We use the cv::bitwise_or function
-*          for combining the lanes masks based on boolean OR logic.
-*@return : The output returned by this function is a cv::lanesMask matrix containing
-*          both the white and yellow lanes
-*****/
 cv::Mat Thresholder::combineLanes() {
     lanesMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
     cv::bitwise_or(whiteMask, yellowMask, lanesMask);

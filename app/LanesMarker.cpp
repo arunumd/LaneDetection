@@ -34,14 +34,6 @@ typedef std::vector<pointsPair> laneType;
 // <Short form for a vector of type cv::Vec2f
 typedef std::vector<cv::Vec2f> hType;
 
-/***
-*@brief  : The lanesSegregator() function takes in the cv::HoughLines function
-*          output and classifies the HoughLines as belonging to left lane and
-*          the right lane based on the slopes.
-*@params : The input parameter hLines is of type hType as defined in the typedef
-*          statement above
-*****/
-
 void LanesMarker::lanesSegregator(hType hLines) {
     for (auto& item : hLines) {
         rho = item[0], theta = item[1];
@@ -64,13 +56,6 @@ void LanesMarker::lanesSegregator(hType hLines) {
         }
     }
 }
-
-/***
-*@brief  : The leftLanesAverage() function is used for averaging all the left lanes
-*          to get only one unique left lane
-*@return : The output returned by this function is a pair of top and bottom points
-*          belonging to the left lane
-******/
 
 pointsPair LanesMarker::leftLanesAverage() {
     for (auto& item : lLane) {
@@ -95,12 +80,6 @@ pointsPair LanesMarker::leftLanesAverage() {
     return std::make_pair(avgPoint1Left, avgPoint2Left);
 }
 
-/***
-*@brief  : The rightLanesAverage() function is used for averaging all the right lanes
-*          to get only one unique right lane
-*@return : The output returned by this function is a pair of top and bottom points
-*          belonging to the right lane
-******/
 pointsPair LanesMarker::rightLanesAverage() {
     for (auto& item : rLane) {
         cv::Point2d V1;

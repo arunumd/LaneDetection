@@ -27,16 +27,6 @@
 *************************************************************************************************/
 #include "RegionMaker.hpp"
 
-/****
-*@brief  : The getPolygonVertices() function reads the points which are ones in the
-*          input image and check for the x-coordinates for y-coordinates of interest.
-*          The best coordinates are picked and pushed to the polygonvertices container
-*@params : The input parameter cv::Mat binaryPoints is a binary image containing ones
-*          in regions where there were HoughLines and zeros everywhere else
-*@return : The output returned by this function is a container with polygon vertices
-*          in the right sequence for feeding into cv::fillConvexPoly()
-******/
-
 std::vector<cv::Point> RegionMaker::getPolygonVertices(cv::Mat binaryPoints) {
     for (size_t i = 0; i < binaryPoints.total(); i++) {
         if (binaryPoints.at<cv::Point>(i).x > low \

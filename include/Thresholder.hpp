@@ -42,10 +42,10 @@ class Thresholder {
  public:
     /***
     *@brief  : Default constructor for Thresholder class
-    *@params : wMin is minimum threshold for white color
-    *@params : wMax is maximum threshold for white color
-    *@params : yMin is minimum threshold for yellow color
-    *@params : yMax is maximum threshold for yellow color
+    *@param  : wMin is minimum threshold for white color
+    *@param  : wMax is maximum threshold for white color
+    *@param  : yMin is minimum threshold for yellow color
+    *@param  : yMax is maximum threshold for yellow color
     *****/
     Thresholder(cv::Scalar wMin, cv::Scalar wMax, cv::Scalar yMin, \
                 cv::Scalar yMax) : whiteMin(wMin), whiteMax(wMax), \
@@ -56,7 +56,7 @@ class Thresholder {
     /***
     *@brief  : The convertToLab() function converts the input BGR image into an
     *          L*a*b color space image
-    *@params : The parameter smoothImg is the input image with GaussianBlur
+    *@param  : The parameter smoothImg is the input image with GaussianBlur
     *****/
     cv::Mat convertToLab(cv::Mat smoothImg);
 

@@ -51,18 +51,11 @@
 
 namespace FS = boost::filesystem;   // !Short form for boost filesystem
 
-// @Brief: We create some short forms for long type names
-
-// Short form for file name pairs (for example, <200.jpg, 200>)
 typedef std::pair<FS::path, int> file_entry;
-// Short form for vector of tuples
 typedef std::vector<file_entry> vec;
-// Short form for iterator of type, boost::filesystem::directory_iterator
+
 typedef FS::directory_iterator dirIter;
 
-// The fileFeeder method reads the command-line args and
-// creates a vector of valid file-names existing in a valid
-// directory
 std::string Files::fileFeeder(std::string commandArgs) {
     FS::path pathObj(commandArgs);
 
@@ -78,8 +71,6 @@ std::string Files::fileFeeder(std::string commandArgs) {
     return commandArgs;   //< Return the valid directory address
 }
 
-// The filePicker method reads the command-line args and
-// iterates with user input until it returns a valid file name
 std::string Files::filePicker(std::string commandArgs) {
     FS::path pathObj(commandArgs);
 
@@ -95,15 +86,10 @@ std::string Files::filePicker(std::string commandArgs) {
     return commandArgs;   //< Return the valid filename address
 }
 
-// Next we create a string to integer conversion method that
-// sorts the numerical file names in ascending order.
-// The return type for this method is "int"
 int Files::stringToInt(FS::path const& pathObj) {
     return std::stoi(pathObj.filename().string());
 }
 
-// Next we create a path sorting method that sorts the path_vector
-// into ascending order of files for accessing files in the right order
 std::vector<std::pair<boost::filesystem::path, int>> \
 Files::pathSorter(FS::path const& pathObj) {
     // First we ensure that our path_vec is a clean container
