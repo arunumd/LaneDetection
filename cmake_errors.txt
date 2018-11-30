@@ -1,0 +1,44 @@
+arun@arun-HP-PC:~/Documents/LaneDetection/build$ cmake .. && make
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+CMake Error at vendor/googletest/googletest/cmake/internal_utils.cmake:151 (add_library):
+  add_library cannot create target "gtest" because another target with the
+  same name already exists.  The existing target is a static library created
+  in source directory
+  "/home/arun/Documents/LaneDetection/vendor/googletest/googletest".  See
+  documentation for policy CMP0002 for more details.
+Call Stack (most recent call first):
+  vendor/googletest/googletest/cmake/internal_utils.cmake:174 (cxx_library_with_type)
+  vendor/googletest/googletest/CMakeLists.txt:90 (cxx_library)
+
+
+CMake Error at vendor/googletest/googletest/cmake/internal_utils.cmake:151 (add_library):
+  add_library cannot create target "gtest_main" because another target with
+  the same name already exists.  The existing target is a static library
+  created in source directory
+  "/home/arun/Documents/LaneDetection/vendor/googletest/googletest".  See
+  documentation for policy CMP0002 for more details.
+Call Stack (most recent call first):
+  vendor/googletest/googletest/cmake/internal_utils.cmake:174 (cxx_library_with_type)
+  vendor/googletest/googletest/CMakeLists.txt:91 (cxx_library)
+
+
+CMake Error at vendor/googletest/googletest/CMakeLists.txt:92 (target_link_libraries):
+  Attempt to add link library "gtest" to target "gtest_main" which is not
+  built in this directory.
+
+
+CMake Error at vendor/googletest/googletest/CMakeLists.txt:105 (install):
+  install TARGETS given target "gtest" which does not exist in this
+  directory.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/arun/Documents/LaneDetection/build/CMakeFiles/CMakeOutput.log".
+See also "/home/arun/Documents/LaneDetection/build/CMakeFiles/CMakeError.log".
