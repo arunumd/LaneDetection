@@ -21,6 +21,10 @@ Every method has its own advantages and disadvantages. Neural networks are suppo
 
 Segmentation is the process of isolating colors of interest from the remaining details present in a scene (image). For any segmentation we apply some kind of thresholding operation based on our colors of interest. In this project, we apply thresholds for white and yellow colors in Lab color space. While there are several other color spaces like HSV, HSL, RGB, BGR, etc., Lab color space is quite unique in that it has a separate channel dedicated only for lightness and darkness of an image. The remaining two channels are for the colors of the image. Hence this color space gives an operational ease to the user and gives more control to the user during thresholding. 
 
+## Updates with GMock Testing
+
+In further to the original project scope, the Thresholder class is now mocked with Google's GMock testing framework inside /test/test.cpp file. A new class called MockThresholder which inherits all the properties and methods of Thresholder class has been created. The mocked class is expected to call the mocked methods sequentially and then the actual returned types are verified with expected return types.
+
 **The image shown below is the result obtained from Lab color thresholding operation**
 ![LabThreshold](http://i63.tinypic.com/ogcuhw.png)
 
@@ -61,16 +65,13 @@ Please click the following link for viewing the product backlog, iteration backl
 
 ## Standard install via command-line
 ```
-git clone --recursive https://github.com/arunumd/LaneDetection
-cd <path to repository>
+git clone -b GMock_Extra_Credit https://github.com/arunumd/LaneDetection.git
+cd LaneDetection
 mkdir build
 cd build
-cmake ..
-make
-Run tests: ./test/cpp-test
-Run program: ./app/shell-app
-When prompted enter the full path of the input video file "challenge_video.mp4" present in the input folder in repository root
+cmake .. && make
 ```
+You MUST place the vendor folder inside /Lanedetection before running the *cmake .. && make* command
 
 ## Doxygen documentation
 
