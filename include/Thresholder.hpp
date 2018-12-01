@@ -79,6 +79,12 @@ class Thresholder {
     *******/
     cv::Mat combineLanes();
 
+    /****
+    *@brief  : Created the new mocFunc function for mimicking a GMock test
+    *****/
+
+    void mockFunc();
+
  private:
     cv::Mat inputImg;   // < Container used for storing input image
     const cv::Scalar whiteMin;   // < Minimum threshold for white lane
