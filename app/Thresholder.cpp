@@ -52,3 +52,9 @@ cv::Mat Thresholder::combineLanes() {
     return lanesMask;
 }
 
+void Thresholder::mockFunc() {
+    if(cleanMock.imgSmoothen == cv::Mat) {
+        std::cout << "Matrix returned by mock method" << std::endl;
+    }
+}
+
