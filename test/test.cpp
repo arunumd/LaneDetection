@@ -29,6 +29,7 @@
 *              SOFTWARE.
 *************************************************************************************************/
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "Cleaner.hpp"
 #include "Thresholder.hpp"
 #include "LanesMarker.hpp"
@@ -132,3 +133,19 @@ TEST(RegionMakerTest, PolygonTest) {
     EXPECT_EQ(typeid(std::vector<cv::Point>).name(), \
               typeid(polyVecType).name());
 }
+
+/*****************************************************
+*
+* Creating mock class for Extra credit implementation
+*
+******************************************************/
+
+/*
+*@brief  : The following class mocks the behavior of Cleaner class
+*/
+
+class MockThresholder : public Cleaner {
+public:
+	MOCK_METHOD1(imgUndistort, void(cv::Mat rawImg));
+	MOCK_METHOD0(imgSmoothen, cv::Mat());
+};
