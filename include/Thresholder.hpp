@@ -40,7 +40,7 @@
 #include "Cleaner.hpp"
 
 class Thresholder {
-    Cleaner & cleanMock;
+    Cleaner *cleanMock;
  public:
     /***
     *@brief  : Default constructor for Thresholder class

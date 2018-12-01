@@ -25,6 +25,7 @@
 *              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 *              SOFTWARE.
 *************************************************************************************************/
+#include <typeinfo>
 #include "Thresholder.hpp"
 #include "Cleaner.hpp"
 
@@ -53,7 +54,8 @@ cv::Mat Thresholder::combineLanes() {
 }
 
 void Thresholder::mockFunc() {
-    if(cleanMock.imgSmoothen == cv::Mat) {
+    cv::Mat dummyX = cv::Mat::ones(100, 100, CV_8UC3);
+    if(typeid(cleanMock->imgSmoothen()).name() == typeid(dummyX).name()) {
         std::cout << "Matrix returned by mock method" << std::endl;
     }
 }
