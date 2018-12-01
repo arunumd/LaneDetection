@@ -47,8 +47,8 @@ class Cleaner {
  public:
     /**
     * @brief  : The default constructor for Cleaner class
-    * @param : cParam is the camera Parameters
-    * @param : dCoeffs is the distortion coefficients
+    * @params : cParam is the camera Parameters
+    * @params : dCoeffs is the distortion coefficients
     *
     ****/
     Cleaner(cv::Mat cParam, cv::Mat dCoeffs) : \
@@ -58,17 +58,17 @@ class Cleaner {
     /**
     *
     * @brief  : The function imgUndistort is used for undistorting an input image
-    * @param  : rawImg is the input image from video frames
+    * @params : rawImg is the input image from video frames
     *
     ****/
-    virtual void imgUndistort(cv::Mat rawImg);
+    void imgUndistort(cv::Mat rawImg);
 
     /***
     *
-    * @brief  : The function imgSmoothen applies a gaussian blur on undistorted image
+    * @brief  : the function imgSmoothen applies a gaussian blur on undistorted image
     *
     *****/
-    virtual cv::Mat imgSmoothen();
+    cv::Mat imgSmoothen();
 
  private:
     cv::Mat camParams;   // < Container for Camera parameters

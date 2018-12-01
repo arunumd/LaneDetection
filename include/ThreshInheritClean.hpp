@@ -1,9 +1,9 @@
 /************************************************************************************************
-* @file      : Implementation file for Thresholder class
+* @file      : Inheritance header file for Thresholder class inherited from Cleaner class
 * @author    : Arun Kumar Devarajulu
 * @brief     : The Thresholder class creates an L*a*b color threshold for the lanes in
 *              road images
-* @date      : October 8, 2018
+* @date      : November 30, 2018
 * @copyright : 2018, Arun Kumar Devarajulu
 * @license   : MIT License
 *
@@ -26,28 +26,4 @@
 *              SOFTWARE.
 *************************************************************************************************/
 #include "Thresholder.hpp"
-
-cv::Mat Thresholder::convertToLab(cv::Mat smoothImg) {
-    inputImg = smoothImg;
-    cv::cvtColor(inputImg, labImage, cv::COLOR_BGR2Lab);
-    return labImage;
-}
-
-cv::Mat Thresholder::whiteMaskFunc() {
-    whiteMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
-    cv::inRange(labImage, whiteMin, whiteMax, whiteMask);
-    return whiteMask;
-}
-
-cv::Mat Thresholder::yellowMaskFunc() {
-    yellowMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
-    cv::inRange(labImage, yellowMin, yellowMax, yellowMask);
-    return yellowMask;
-}
-
-cv::Mat Thresholder::combineLanes() {
-    lanesMask = cv::Mat::zeros(lanesMask.size(), CV_8U);
-    cv::bitwise_or(whiteMask, yellowMask, lanesMask);
-    return lanesMask;
-}
-
+#include "Cleaner.hpp"

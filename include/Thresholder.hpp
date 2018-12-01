@@ -37,10 +37,8 @@
 #include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include "Cleaner.hpp"
 
 class Thresholder {
-    Cleaner *cleanMock;
  public:
     /***
     *@brief  : Default constructor for Thresholder class
@@ -80,12 +78,6 @@ class Thresholder {
     *          image with only yellow and white lanes on the road
     *******/
     cv::Mat combineLanes();
-
-    /****
-    *@brief  : Created the new mocFunc function for mimicking a GMock test
-    *****/
-
-    void mockFunc();
 
  private:
     cv::Mat inputImg;   // < Container used for storing input image

@@ -13,7 +13,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
-set(NAME_SRC app/main.cpp app/Files.cpp app/Cleaner.cpp app/Thresholder.cpp app/LanesMarker.cpp app/RegionMaker.cpp include/Thresholder.hpp)
+set(NAME_SRC app/main.cpp app/Files.cpp app/Cleaner.cpp app/Thresholder.cpp app/LanesMarker.cpp app/RegionMaker.cpp)
 set(NAME_HEADERS include/Files.hpp include/Cleaner.hpp include/Thresholder.hpp include/LanesMarker.hpp include/RegionMaker.hpp)
 
 # We probably don't want this to run on every build.
