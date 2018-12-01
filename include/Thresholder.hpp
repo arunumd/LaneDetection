@@ -51,33 +51,33 @@ class Thresholder {
                 cv::Scalar yMax) : whiteMin(wMin), whiteMax(wMax), \
                 yellowMin(yMin), yellowMax(yMax) {}
 
-    ~Thresholder() {}   // <Default destructor for Thresholder class
+    virtual ~Thresholder() {}   // <Default destructor for Thresholder class
 
     /***
     *@brief  : The convertToLab() function converts the input BGR image into an
     *          L*a*b color space image
     *@param  : The parameter smoothImg is the input image with GaussianBlur
     *****/
-    cv::Mat convertToLab(cv::Mat smoothImg);
+    virtual cv::Mat convertToLab(cv::Mat smoothImg);
 
     /****
     *@brief  : The whiteMaskFunc() creates a white lanes mask based on the
     *          minimum and maximum range of white color threshold
     *******/
-    cv::Mat whiteMaskFunc();
+    virtual cv::Mat whiteMaskFunc();
 
     /****
     *@brief  : The yellowMaskFunc() creates a yellow lanes mask based on the
     *          minimum and maximum range of yellow color threshold
     *******/
-    cv::Mat yellowMaskFunc();
+    virtual cv::Mat yellowMaskFunc();
 
     /****
     *@brief  : The combinelanes() combines the outputs obtained from
     *          whiteMaskFunc() and yellowMaskFunc() and creates a binary
     *          image with only yellow and white lanes on the road
     *******/
-    cv::Mat combineLanes();
+    virtual cv::Mat combineLanes();
 
  private:
     cv::Mat inputImg;   // < Container used for storing input image
