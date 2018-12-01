@@ -29,10 +29,12 @@
 *              SOFTWARE.
 *************************************************************************************************/
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "Cleaner.hpp"
 #include "Thresholder.hpp"
 #include "LanesMarker.hpp"
 #include "RegionMaker.hpp"
+#include <typeinfo>
 #include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
 #include <opencv2/core/core.hpp>
@@ -43,6 +45,9 @@
 #include "opencv2/imgproc/imgproc_c.h"
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgcodecs.hpp"
+
+using ::testing::Return;
+using::testing::_;
 
 template <typename T> std::string type_name();
 
@@ -131,4 +136,45 @@ TEST(RegionMakerTest, PolygonTest) {
     auto polyVecType = polygonObj.getPolygonVertices(sampleImg);
     EXPECT_EQ(typeid(std::vector<cv::Point>).name(), \
               typeid(polyVecType).name());
+}
+
+/************************************************
+*@brief  : Creating a mock method for the 
+*          Thresholder class
+*************************************************/
+class MockThresholder : public Thresholder {
+public:
+    MOCK_METHOD1(convertToLab, cv::Mat(cv::Mat smoothImg));
+    MOCK_METHOD0(whiteMaskFunc, cv::Mat());
+    MOCK_METHOD0(yellowMaskFunc, cv::Mat());
+    MOCK_METHOD0(combineLanes, cv::Mat());
+};
+
+/***********************************************
+*@brief  : Creating test cases for mock methods
+************************************************/
+TEST(ThreshMocktest, PlayFunctions) {
+    MockThresholder MockThresh;
+    // Calling all the mocked methods
+    EXPECT_CALL(MockThresh, convertToLab(_))
+    .Times(1);
+    EXPECT_CALL(MockThresh, whiteMaskFunc())
+    .Times(1);
+    EXPECT_CALL(MockThresh, yellowMaskFunc())
+    .Times(1);
+    EXPECT_CALL(MockThresh, combineLanes())
+    .Times(1);
+    
+    // Getting outputs returned from all the mock methods
+    cv::Mat dummyXY = cv::Mat::ones(100, 100, CV_8UC3);
+    auto firstOp = MockThresh.convertToLab(dummyXY);
+    auto secondOp = MockThresh.whiteMaskFunc();
+    auto thirdOp = MockThresh.yellowMaskFunc();
+    auto fourthOp = MockThresh.combineLanes();
+
+    // Checking actual return type with expected return type
+    EXPECT_EQ(typeid(dummyXY).name(),typeid(firstOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(),typeid(secondOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(),typeid(thirdOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(),typeid(fourthOp).name());
 }

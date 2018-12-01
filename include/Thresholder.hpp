@@ -47,6 +47,7 @@ class Thresholder {
     *@param  : yMin is minimum threshold for yellow color
     *@param  : yMax is maximum threshold for yellow color
     *****/
+    Thresholder() {}
     Thresholder(cv::Scalar wMin, cv::Scalar wMax, cv::Scalar yMin, \
                 cv::Scalar yMax) : whiteMin(wMin), whiteMax(wMax), \
                 yellowMin(yMin), yellowMax(yMax) {}
