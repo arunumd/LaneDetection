@@ -61,24 +61,14 @@ class Cleaner {
     * @param : rawImg is the input image from video frames
     *
     ****/
-    virtual void imgUndistort(cv::Mat rawImg);
+    void imgUndistort(cv::Mat rawImg);
 
     /***
     *
     * @brief  : The function imgSmoothen applies a gaussian blur on undistorted image
     *
     *****/
-    virtual cv::Mat imgSmoothen();
-
-    /***
-    *
-    * @brief  : This is a dummy function that takes in two strings (String A, String B)
-    *           and broadcasts a simple message
-    * @param  : String A is a dummy user input
-    * @param  : String B is also a dummy user input
-    *
-    ****/
-
+    cv::Mat imgSmoothen();
 
  private:
     cv::Mat camParams;   // < Container for Camera parameters
