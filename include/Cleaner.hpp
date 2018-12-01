@@ -58,7 +58,7 @@ class Cleaner {
     /**
     *
     * @brief  : The function imgUndistort is used for undistorting an input image
-    * @param : rawImg is the input image from video frames
+    * @param  : rawImg is the input image from video frames
     *
     ****/
     virtual void imgUndistort(cv::Mat rawImg);
@@ -69,16 +69,6 @@ class Cleaner {
     *
     *****/
     virtual cv::Mat imgSmoothen();
-
-    /***
-    *
-    * @brief  : This is a dummy function that takes in two strings (String A, String B)
-    *           and broadcasts a simple message
-    * @param  : String A is a dummy user input
-    * @param  : String B is also a dummy user input
-    *
-    ****/
-
 
  private:
     cv::Mat camParams;   // < Container for Camera parameters
