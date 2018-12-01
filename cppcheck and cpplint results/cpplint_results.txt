@@ -1,0 +1,25 @@
+arun@arun-HP-PC:~/Documents/LaneDetection/test$ cpplint *.*
+Ignoring CMakeLists.txt; not a valid file name (c++, hpp, hxx, h++, cuh, cc, cpp, cxx, c, h, cu)
+Done processing CMakeLists.txt
+Done processing main.cpp
+Done processing test.cpp
+arun@arun-HP-PC:~/Documents/LaneDetection/app$ cpplint *.*
+Done processing Cleaner.cpp
+Ignoring CMakeLists.txt; not a valid file name (cuh, c, cc, hxx, cxx, h++, c++, h, cu, cpp, hpp)
+Done processing CMakeLists.txt
+Done processing Files.cpp
+Done processing LanesMarker.cpp
+main.cpp:0:  No copyright message found.  You should have a line: "Copyright [year] <Copyright Owner>"  [legal/copyright] [5]
+Done processing main.cpp
+Done processing RegionMaker.cpp
+Done processing Thresholder.cpp
+Total errors found: 1
+arun@arun-HP-PC:~/Documents/LaneDetection/include$ cpplint *.*
+Done processing Cleaner.hpp
+Done processing Files.hpp
+Done processing LanesMarker.hpp
+Done processing RegionMaker.hpp
+Done processing Thresholder.hpp
+
+
+

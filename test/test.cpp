@@ -28,13 +28,13 @@
 *              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 *              SOFTWARE.
 *************************************************************************************************/
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <typeinfo>
 #include "Cleaner.hpp"
 #include "Thresholder.hpp"
 #include "LanesMarker.hpp"
 #include "RegionMaker.hpp"
-#include <typeinfo>
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
 #include <opencv2/core/core.hpp>
@@ -47,7 +47,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 using ::testing::Return;
-using::testing::_;
+using ::testing::_;
 
 template <typename T> std::string type_name();
 
@@ -139,11 +139,11 @@ TEST(RegionMakerTest, PolygonTest) {
 }
 
 /************************************************
-*@brief  : Creating a mock method for the 
+*@brief  : Creating a mock method for the
 *          Thresholder class
 *************************************************/
 class MockThresholder : public Thresholder {
-public:
+ public:
     MOCK_METHOD1(convertToLab, cv::Mat(cv::Mat smoothImg));
     MOCK_METHOD0(whiteMaskFunc, cv::Mat());
     MOCK_METHOD0(yellowMaskFunc, cv::Mat());
@@ -164,17 +164,15 @@ TEST(ThreshMocktest, PlayFunctions) {
     .Times(1);
     EXPECT_CALL(MockThresh, combineLanes())
     .Times(1);
-    
     // Getting outputs returned from all the mock methods
     cv::Mat dummyXY = cv::Mat::ones(100, 100, CV_8UC3);
     auto firstOp = MockThresh.convertToLab(dummyXY);
     auto secondOp = MockThresh.whiteMaskFunc();
     auto thirdOp = MockThresh.yellowMaskFunc();
     auto fourthOp = MockThresh.combineLanes();
-
     // Checking actual return type with expected return type
-    EXPECT_EQ(typeid(dummyXY).name(),typeid(firstOp).name());
-    EXPECT_EQ(typeid(dummyXY).name(),typeid(secondOp).name());
-    EXPECT_EQ(typeid(dummyXY).name(),typeid(thirdOp).name());
-    EXPECT_EQ(typeid(dummyXY).name(),typeid(fourthOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(), typeid(firstOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(), typeid(secondOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(), typeid(thirdOp).name());
+    EXPECT_EQ(typeid(dummyXY).name(), typeid(fourthOp).name());
 }
