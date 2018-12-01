@@ -26,6 +26,7 @@
 *              SOFTWARE.
 *************************************************************************************************/
 #include "Thresholder.hpp"
+#include "Cleaner.hpp"
 
 cv::Mat Thresholder::convertToLab(cv::Mat smoothImg) {
     inputImg = smoothImg;
