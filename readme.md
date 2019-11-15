@@ -22,21 +22,21 @@ Every method has its own advantages and disadvantages. Neural networks are suppo
 Segmentation is the process of isolating colors of interest from the remaining details present in a scene (image). For any segmentation we apply some kind of thresholding operation based on our colors of interest. In this project, we apply thresholds for white and yellow colors in Lab color space. While there are several other color spaces like HSV, HSL, RGB, BGR, etc., Lab color space is quite unique in that it has a separate channel dedicated only for lightness and darkness of an image. The remaining two channels are for the colors of the image. Hence this color space gives an operational ease to the user and gives more control to the user during thresholding. 
 
 **The image shown below is the result obtained from Lab color thresholding operation**
-![LabThreshold](http://i63.tinypic.com/ogcuhw.png)
+![LabThreshold](results/LanesMask.png)
 
 After segmentation of the white and yellow lanes, we obtain a binary image wherein the regions of the image with the lanes become ones and all other regions in the image become zeros. After this step, the process is quite easy. We apply a gradient based edge detector like the Canny edge detector and then we apply Hough transform to obtain Hough lines on top of the edges. 
 
 **A sample screenshot of the canny edge detection for this project is shown below**
-![CannyOutput](http://i64.tinypic.com/25gdzd3.png)
+![CannyOutput](results/CannyLanesEdgeDetection.png)
 
 
 **The image shown below is a sample screenshot of HoughLines detection**
-![HoughDetection](http://i63.tinypic.com/2qb7tki.png)
+![HoughDetection](results/HoughLinesDetection.png)
 
 Later, we manipulate the slopes of the obtained Hough lines and mark the lanes. We also make announcements like the road conditions ahead (left turn, right turn, etc.).
 
 **The following image is the final result of lane detection**
-![Lanedetection](http://i65.tinypic.com/6t20ly.png)
+![Lanedetection](results/LaneDetection.png)
 
 ## Dependencies
 
